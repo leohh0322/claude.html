@@ -432,7 +432,7 @@
                 name: targetCompName ? `${targetName} (${targetCompName})` : targetName, realName: targetName, dayByDay, workDays,
                 stdHoursRaw: stdMins / 60, totalHoursRaw: totalMins / 60, overHoursRaw: overMins / 60, vacationHoursRaw: vacationMins / 60,
                 vacationUsed: vacationInfo.used, vacationRemain: vacationInfo.remain,
-                display: { workDays: `${workDays}일`, stdHours: memberFormatMinutes(stdMins), totalHours: memberFormatMinutes(totalMins), overTime: memberFormatMinutes(overMins), vacation: `${vacationInfo.used}일`, remainVacation: `${vacationInfo.remain}일`, avgIn: avgIn > 0 ? memberFormatMinutes(avgIn, 'colon') : '-', avgOut: avgOut > 0 ? memberFormatMinutes(avgOut, 'colon') : '-', missing: `${dayByDay.filter(d => d.isMissing).length}건` }
+                display: { workDays: `${workDays}일`, stdHours: memberFormatMinutes(stdMins), totalHours: memberFormatMinutes(totalMins), overTime: memberFormatMinutes(overMins), vacation: `${vacationInfo.used}일 (${vacationInfo.used * 8}시간)`, remainVacation: `${vacationInfo.remain}일 (${vacationInfo.remain * 8}시간)`, avgIn: avgIn > 0 ? memberFormatMinutes(avgIn, 'colon') : '-', avgOut: avgOut > 0 ? memberFormatMinutes(avgOut, 'colon') : '-', missing: `${dayByDay.filter(d => d.isMissing).length}건` }
             };
             return memberCurrentCalculatedData;
         }
