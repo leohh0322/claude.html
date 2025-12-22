@@ -31,6 +31,7 @@
         .info-card.green { border-left-color: #10b981; }
         .info-card.red { border-left-color: #ef4444; }
         .info-card.purple { border-left-color: #8b5cf6; }
+        .info-card.cyan { border-left-color: #06b6d4; }
         .label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
         .value { font-size: 24px; font-weight: 800; color: #1e293b; }
         .sub-value { font-size: 13px; color: #94a3b8; margin-top: 4px; }
@@ -50,10 +51,10 @@
         .loading-spinner { width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-text { margin-top: 20px; font-size: 16px; color: #64748b; }
-        .vacation-info { display: flex; align-items: baseline; gap: 8px; }
-        .vacation-used { font-size: 24px; font-weight: 800; color: #10b981; }
-        .vacation-separator { font-size: 18px; color: #94a3b8; }
-        .vacation-remain { font-size: 16px; font-weight: 600; color: #64748b; }
+        .remain-vacation-card { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border-radius: 16px; padding: 24px; color: white; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
+        .remain-vacation-card .label { color: rgba(255, 255, 255, 0.9); font-size: 14px; margin-bottom: 8px; }
+        .remain-vacation-card .value { color: white; font-size: 36px; font-weight: 900; }
+        .remain-vacation-card .sub-value { color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -119,13 +120,9 @@
                                     <div class="sub-value">총 근무 - 기준 시간</div>
                                 </div>
                                 <div class="info-card green" onclick="memberShowDetail('vacation')">
-                                    <div class="label">🏖️ 휴가 사용 및 잔여 연차</div>
-                                    <div class="vacation-info">
-                                        <span class="vacation-used" id="member_val_vacation">-</span>
-                                        <span class="vacation-separator">/</span>
-                                        <span class="vacation-remain" id="member_val_remainVacation">-</span>
-                                    </div>
-                                    <div class="sub-value">이번 달 사용 / 잔여 연차</div>
+                                    <div class="label">🏖️ 휴가 사용</div>
+                                    <div class="value" id="member_val_vacation">-</div>
+                                    <div class="sub-value">이번 달 사용한 연차</div>
                                 </div>
                                 <div class="info-card red" onclick="memberShowDetail('missing')">
                                     <div class="label">⚠️ 기록 누락</div>
@@ -144,9 +141,17 @@
                             </div>
                         </div>
                         <div class="lg:col-span-1">
-                            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 h-full">
+                            <!-- 잔여 연차 카드 -->
+                            <div class="remain-vacation-card">
+                                <div class="label">💎 잔여 연차</div>
+                                <div class="value" id="member_val_remainVacation">-</div>
+                                <div class="sub-value">현재 사용 가능한 연차</div>
+                            </div>
+                            
+                            <!-- 근무 시간 분석 차트 -->
+                            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
                                 <h3 class="text-lg font-bold text-gray-800 mb-6 text-center">📈 근무 시간 분석</h3>
-                                <div style="height: 400px;"><canvas id="memberWorkChart"></canvas></div>
+                                <div style="height: 320px;"><canvas id="memberWorkChart"></canvas></div>
                             </div>
                         </div>
                     </div>
@@ -443,7 +448,7 @@
                 case 'workDays': title.innerText = '📅 통합 근무 일자 상세'; memberCurrentCalculatedData.dayByDay.filter(d => d.isWorkDay).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${d.policy}</span></div>`; }); cfg.data.datasets.push({ label: '근무 여부', data: memberCurrentCalculatedData.dayByDay.map(d => d.isWorkDay ? 1 : 0), backgroundColor: '#3b82f6' }); cfg.options.scales = { y: { display: false } }; break;
                 case 'totalHours': title.innerText = '💼 일자별 근무 시간'; cfg.data.datasets.push({ label: '분', data: memberCurrentCalculatedData.dayByDay.map(d => d.total), backgroundColor: '#8b5cf6' }); memberCurrentCalculatedData.dayByDay.forEach(d => { if (d.total > 0) list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.total)}</span></div>`; }); break;
                 case 'overTime': title.innerText = '🔥 일자별 초과 근무'; cfg.data.datasets.push({ label: '분', data: memberCurrentCalculatedData.dayByDay.map(d => d.over), backgroundColor: '#ef4444' }); memberCurrentCalculatedData.dayByDay.forEach(d => { if (d.over > 0) list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.over)}</span></div>`; }); break;
-                case 'vacation': title.innerText = '🏖️ 휴가 사용 및 잔여 연차'; list.innerHTML = `<div class="modal-list-item" style="background: #f0fdf4; padding: 12px; border-radius: 8px; margin-bottom: 8px;"><span class="font-bold text-green-700">이번 달 사용</span><span class="text-green-600 font-bold">${memberCurrentCalculatedData.vacationUsed}일</span></div><div class="modal-list-item" style="background: #eff6ff; padding: 12px; border-radius: 8px;"><span class="font-bold text-blue-700">잔여 연차</span><span class="text-blue-600 font-bold">${memberCurrentCalculatedData.vacationRemain}일</span></div>`; cfg.type = 'doughnut'; cfg.data = { labels: ['사용', '잔여'], datasets: [{ data: [memberCurrentCalculatedData.vacationUsed, Math.max(0, memberCurrentCalculatedData.vacationRemain)], backgroundColor: ['#10b981', '#3b82f6'], borderWidth: 0 }] }; cfg.options = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: c => ` ${c.parsed}일` } } } }; break;
+                case 'vacation': title.innerText = '🏖️ 휴가 사용 상세'; memberCurrentCalculatedData.dayByDay.filter(d => d.vacation > 0).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.vacation)}</span></div>`; }); cfg.data.datasets.push({ label: '분', data: memberCurrentCalculatedData.dayByDay.map(d => d.vacation), backgroundColor: '#10b981' }); break;
                 case 'missing': title.innerText = '⚠️ 기록 누락 일자'; cfg.data.datasets.push({ label: '누락', data: memberCurrentCalculatedData.dayByDay.map(d => d.isMissing ? 1 : 0), backgroundColor: '#ef4444' }); cfg.options.scales = { y: { display: false } }; memberCurrentCalculatedData.dayByDay.filter(d => d.isMissing).forEach(d => { list.innerHTML += `<div class="modal-list-item" style="color:#ef4444"><span>${d.date}</span><span>기록 없음</span></div>`; }); break;
                 case 'avgIn': title.innerText = '🌅 일자별 출근 시각'; cfg.type = 'line'; cfg.data.datasets.push({ label: '출근', data: memberCurrentCalculatedData.dayByDay.map(d => d.in > 0 ? d.in : null), borderColor: '#3b82f6', pointBackgroundColor: '#3b82f6', tension: 0.3, spanGaps: true }); cfg.options.scales = { y: { ticks: { callback: v => memberFormatMinutes(v, 'colon') } } }; memberCurrentCalculatedData.dayByDay.filter(d => d.in > 0).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.in, 'colon')}</span></div>`; }); break;
                 case 'avgOut': title.innerText = '🌆 일자별 퇴근 시각'; cfg.type = 'line'; cfg.data.datasets.push({ label: '퇴근', data: memberCurrentCalculatedData.dayByDay.map(d => d.out > 0 ? d.out : null), borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', tension: 0.3, spanGaps: true }); cfg.options.scales = { y: { ticks: { callback: v => memberFormatMinutes(v, 'colon') } } }; memberCurrentCalculatedData.dayByDay.filter(d => d.out > 0).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.out, 'colon')}</span></div>`; }); break;
