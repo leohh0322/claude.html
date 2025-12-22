@@ -386,6 +386,19 @@
             return 0;
         }
 
+        function memberFormatDaysToText(days) {
+            if (!days || days === 0) return '0일';
+            const fullDays = Math.floor(days);
+            const remainingHours = Math.round((days - fullDays) * 8);
+            if (fullDays === 0) {
+                return `${remainingHours}시간`;
+            } else if (remainingHours === 0) {
+                return `${fullDays}일`;
+            } else {
+                return `${fullDays}일 ${remainingHours}시간`;
+            }
+        }
+
         function memberInitChart(data = null) {
             const ctx = document.getElementById('memberWorkChart').getContext('2d');
             if (memberMyChart) memberMyChart.destroy();
@@ -432,7 +445,7 @@
                 name: targetCompName ? `${targetName} (${targetCompName})` : targetName, realName: targetName, dayByDay, workDays,
                 stdHoursRaw: stdMins / 60, totalHoursRaw: totalMins / 60, overHoursRaw: overMins / 60, vacationHoursRaw: vacationMins / 60,
                 vacationUsed: vacationInfo.used, vacationRemain: vacationInfo.remain,
-                display: { workDays: `${workDays}일`, stdHours: memberFormatMinutes(stdMins), totalHours: memberFormatMinutes(totalMins), overTime: memberFormatMinutes(overMins), vacation: `${vacationInfo.used}일 (${vacationInfo.used * 8}시간)`, remainVacation: `${vacationInfo.remain}일 (${vacationInfo.remain * 8}시간)`, avgIn: avgIn > 0 ? memberFormatMinutes(avgIn, 'colon') : '-', avgOut: avgOut > 0 ? memberFormatMinutes(avgOut, 'colon') : '-', missing: `${dayByDay.filter(d => d.isMissing).length}건` }
+                display: { workDays: `${workDays}일`, stdHours: memberFormatMinutes(stdMins), totalHours: memberFormatMinutes(totalMins), overTime: memberFormatMinutes(overMins), vacation: memberFormatDaysToText(vacationInfo.used), remainVacation: memberFormatDaysToText(vacationInfo.remain), avgIn: avgIn > 0 ? memberFormatMinutes(avgIn, 'colon') : '-', avgOut: avgOut > 0 ? memberFormatMinutes(avgOut, 'colon') : '-', missing: `${dayByDay.filter(d => d.isMissing).length}건` }
             };
             return memberCurrentCalculatedData;
         }
