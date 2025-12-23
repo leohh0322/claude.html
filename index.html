@@ -223,14 +223,12 @@
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-lg font-bold text-gray-800 italic"># 조직별 초과근무 비율</h3>
-                            <span class="text-xs text-gray-400">전체 100% 기준</span>
                         </div>
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoTeamChart"></canvas></div>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-lg font-bold text-gray-800 italic"># 인원별 초과근무 비율</h3>
-                            <span class="text-xs text-gray-400">전체 100% 기준</span>
                         </div>
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoDeptChart"></canvas></div>
                     </div>
@@ -890,8 +888,9 @@
             document.getElementById('ceoPopupNameList').innerHTML = userList.sort((a,b) => a.name.localeCompare(b.name)).map(u => `<div class="flex justify-between items-center py-2 border-b border-gray-50 hover:bg-gray-50 px-1 rounded"><span class="font-bold text-gray-700">${u.name}</span><span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">${u.dept}</span></div>`).join('');
             const top5 = [...userList].sort((a,b) => b.overMins - a.overMins).slice(0, 5);
             document.getElementById('ceoTopList').innerHTML = top5.map((u,i) => `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl"><div class="flex items-center gap-3"><span class="w-7 h-7 flex items-center justify-center bg-gray-200 rounded-full text-[10px] font-bold">${i+1}</span><div><p class="text-sm font-bold text-gray-800">${u.name}</p><p class="text-[10px] text-gray-500">${u.dept}</p></div></div><div class="text-right"><p class="text-red-600 text-sm font-bold">${ceoFormatHours(u.overMins)}h</p></div></div>`).join('');
-            const deptLabels = Object.keys(departments);
-            const deptValuesRaw = Object.values(departments);
+const deptEntries = Object.entries(departments).filter(([dept, mins]) => mins > 0);
+const deptLabels = deptEntries.map(([dept, mins]) => dept);
+const deptValuesRaw = deptEntries.map(([dept, mins]) => mins);
             const deptTotal = deptValuesRaw.reduce((sum, v) => sum + v, 0);
             const deptValuesPercent = deptTotal > 0 ? deptValuesRaw.map(v => (v / deptTotal * 100)) : deptValuesRaw;
             const deptValues = adjustPercentsTo100(deptValuesPercent);
