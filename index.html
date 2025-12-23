@@ -235,7 +235,7 @@
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoDeptChart"></canvas></div>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                        <h3 class="text-lg font-bold text-gray-800 mb-6 italic"># 초과근무 Top 5 구성원</h3>
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 italic"># 초과근무 Top 5 구성원(월)</h3>
                         <div id="ceoTopList" class="space-y-4"></div>
                     </div>
                 </div>
@@ -513,6 +513,15 @@
         }
 
         function ceoFormatHours(mins) { return (mins / 60).toFixed(1); }
+        
+        function formatHoursMinutes(decimalHours) {
+            const hours = Math.floor(decimalHours);
+            const minutes = Math.round((decimalHours - hours) * 60);
+            if (minutes === 0) {
+                return `${hours}시간`;
+            }
+            return `${hours}시간 ${minutes}분`;
+        }
 
         function ceoGetTeamCategory(name) {
             if (!name) return '기타';
@@ -528,6 +537,7 @@
         }
 
         function ceoInitCharts(deptData, teamData, trendData) {
+            console.log('차트 초기화 - 요일별 데이터:', trendData);
             const ctxDept = document.getElementById('ceoDeptChart').getContext('2d');
             if (ceoDeptChart) ceoDeptChart.destroy();
             ceoDeptChart = new Chart(ctxDept, { type: 'doughnut', data: { labels: deptData.labels, datasets: [{ data: deptData.values, backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#6366f1','#94a3b8'], borderWidth: 0, hoverOffset: 20 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 10 } } } }, cutout: '65%' } });
@@ -536,13 +546,64 @@
             ceoTeamChart = new Chart(ctxTeam, { type: 'pie', data: { labels: teamData.labels, datasets: [{ data: teamData.values, backgroundColor: ['#2563eb','#10b981','#f59e0b','#ef4444','#8b5cf6','#6366f1','#475569'], borderWidth: 2, borderColor: '#fff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 11, weight: 'bold' } } } } } });
             const ctxTrend = document.getElementById('ceoTrendChart').getContext('2d');
             if (ceoTrendChart) ceoTrendChart.destroy();
-            ceoTrendChart = new Chart(ctxTrend, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: '요일별 평균 근무시간 (h)', data: trendData.values, backgroundColor: '#3b82f6', borderRadius: 6, barThickness: 50 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+            ceoTrendChart = new Chart(ctxTrend, { 
+                type: 'bar', 
+                data: { 
+                    labels: trendData.labels, 
+                    datasets: [{ 
+                        label: '평균 근무시간', 
+                        data: trendData.values, 
+                        backgroundColor: '#3b82f6', 
+                        borderRadius: 6, 
+                        barThickness: 60 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${formatHoursMinutes(context.parsed.y)}`;
+                                }
+                            }
+                        }
+                    }, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatHoursMinutes(value);
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '평균 근무시간',
+                                font: { size: 12 }
+                            }
+                        }, 
+                        x: { 
+                            grid: { display: false },
+                            title: {
+                                display: true,
+                                text: '요일',
+                                font: { size: 12 }
+                            }
+                        } 
+                    } 
+                } 
+            });
         }
 
         function ceoProcessExcel(data) {
             const users = {}, departments = {}, teams = {}, weekdayTrend = {}, missingStats = {};
             const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
             const weekdayData = { '월': [], '화': [], '수': [], '목': [], '금': [], '토': [], '일': [] };
+            const dailyPersonData = {}; // 날짜별, 사람별 근무시간 합산용
             let totalOverMins = 0, totalMissingCount = 0;
             data.forEach(row => {
                 const name = row['이름'], dept = row['회사내 이름'] || '미분류';
@@ -552,7 +613,7 @@
                 if (!name) return;
                 const userId = `${name}_${dept}`;
                 if (!users[userId]) { users[userId] = { name, dept, overMins: 0, totalMins: 0, missingCount: 0 }; if (!missingStats[name]) missingStats[name] = 0; }
-                const isOffDay = (leavePolicy && String(leavePolicy).trim() !== '') || (holidayType && String(holidayType).trim() !== '') || (holidayType === '휴무일') || (holidayType === '주휴일');
+                const isOffDay = (holidayType && String(holidayType).trim() !== '');
                 const isNoPolicy = !policy || String(policy).trim() === '';
                 const isTimeMissing = (!inTime || String(inTime).trim() === '') || (!outTime || String(outTime).trim() === '');
                 if (!isOffDay && isNoPolicy && isTimeMissing) { users[userId].missingCount++; totalMissingCount++; missingStats[name]++; }
@@ -561,24 +622,54 @@
                 if (!departments[dept]) departments[dept] = 0; departments[dept] += dayOver;
                 const teamCat = ceoGetTeamCategory(row['조직']);
                 if (teamCat !== 'EXCLUDED') { if (!teams[teamCat]) teams[teamCat] = 0; teams[teamCat] += dayOver; }
-                if (!isOffDay && dateStr && typeof dateStr === 'string' && dateStr.includes('-')) {
+                
+                // 날짜별, 사람별로 근무시간 합산
+                if (!isOffDay && dateStr) {
                     try {
-                        const d = new Date(dateStr);
-                        const dayOfWeek = weekdays[d.getDay()];
-                        if (weekdayData[dayOfWeek]) {
-                            weekdayData[dayOfWeek].push(workMins);
+                        let d;
+                        if (dateStr instanceof Date) {
+                            d = dateStr;
+                        } else if (typeof dateStr === 'string' && dateStr.includes('-')) {
+                            d = new Date(dateStr);
+                        } else {
+                            d = new Date(dateStr);
                         }
-                    } catch(e) {}
+                        const dayOfWeek = weekdays[d.getDay()];
+                        const dateKey = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+                        const personDateKey = `${name}_${dateKey}`;
+                        
+                        if (!dailyPersonData[personDateKey]) {
+                            dailyPersonData[personDateKey] = {
+                                name: name,
+                                date: dateKey,
+                                dayOfWeek: dayOfWeek,
+                                totalMins: 0
+                            };
+                        }
+                        dailyPersonData[personDateKey].totalMins += workMins;
+                    } catch(e) {
+                        console.error('날짜 파싱 오류:', dateStr, e);
+                    }
                 }
                 totalOverMins += dayOver;
             });
-            const weekdayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+            
+            // 합산된 데이터를 weekdayData에 추가 (0보다 큰 경우만)
+            Object.values(dailyPersonData).forEach(personDay => {
+                if (personDay.totalMins > 0 && weekdayData[personDay.dayOfWeek]) {
+                    weekdayData[personDay.dayOfWeek].push(personDay.totalMins);
+                }
+            });
+            
+            const weekdayLabels = ['월', '화', '수', '목', '금'];
             const weekdayValues = weekdayLabels.map(day => {
                 const dayData = weekdayData[day];
                 if (dayData.length === 0) return 0;
                 const avg = dayData.reduce((sum, val) => sum + val, 0) / dayData.length;
-                return ceoFormatHours(avg);
+                return parseFloat((avg / 60).toFixed(1));
             });
+            console.log('요일별 데이터 수:', weekdayLabels.map((day, i) => `${day}: ${weekdayData[day].length}개`));
+            console.log('요일별 평균값:', weekdayLabels.map((day, i) => `${day}: ${weekdayValues[i]}h`));
             const vacationData = getTotalVacationByMonth(currentCeoMonth);
             ceoVacationDetails = vacationData.details;
             ceoMissingDetails = Object.entries(missingStats).filter(([name, count]) => count > 0).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
