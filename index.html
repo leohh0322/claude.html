@@ -517,7 +517,7 @@
         function formatMinutesToHoursMinutes(minutes) {
             const hours = Math.floor(minutes / 60);
             const mins = Math.round(minutes % 60);
-            if (mins === 0) {
+            if (mins === 60) {
                 return `${hours + 1}시간`;
             }
             if (mins === 0) {
@@ -710,4 +710,5 @@
     </script>
 </body>
 </html>
+
 
