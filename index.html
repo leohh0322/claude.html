@@ -222,14 +222,14 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 italic"># 조직별 초과근무 비율</h3>
+                            <h3 class="text-lg font-bold text-gray-800 italic"># 조직별 초과근무 비중</h3>
                             <span class="text-xs text-gray-400">팀 단위 합계</span>
                         </div>
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoTeamChart"></canvas></div>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 italic"># 인원별 초과근무 비율</h3>
+                            <h3 class="text-lg font-bold text-gray-800 italic"># 인원별 초과근무 비중</h3>
                             <span class="text-xs text-gray-400">전체 대비 점유율</span>
                         </div>
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoDeptChart"></canvas></div>
@@ -514,6 +514,15 @@
 
         function ceoFormatHours(mins) { return (mins / 60).toFixed(1); }
         
+        function formatMinutesToHoursMinutes(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.round(minutes % 60);
+            if (mins === 0) {
+                return `${hours}시간`;
+            }
+            return `${hours}시간 ${mins}분`;
+        }
+        
         function formatHoursMinutes(decimalHours) {
             const hours = Math.floor(decimalHours);
             const minutes = Math.round((decimalHours - hours) * 60);
@@ -566,7 +575,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` ${formatHoursMinutes(context.parsed.y)}`;
+                                    return ` ${formatMinutesToHoursMinutes(context.parsed.y)}`;
                                 }
                             }
                         }
@@ -577,7 +586,7 @@
                             grid: { color: '#f1f5f9' },
                             ticks: {
                                 callback: function(value) {
-                                    return formatHoursMinutes(value);
+                                    return formatMinutesToHoursMinutes(value);
                                 }
                             },
                             title: {
@@ -665,11 +674,17 @@
             const weekdayValues = weekdayLabels.map(day => {
                 const dayData = weekdayData[day];
                 if (dayData.length === 0) return 0;
-                const avg = dayData.reduce((sum, val) => sum + val, 0) / dayData.length;
-                return parseFloat((avg / 60).toFixed(1));
+                const avgMins = dayData.reduce((sum, val) => sum + val, 0) / dayData.length;
+                // 분 단위 그대로 저장 (나중에 표시할 때 시간/분으로 변환)
+                return avgMins;
             });
             console.log('요일별 데이터 수:', weekdayLabels.map((day, i) => `${day}: ${weekdayData[day].length}개`));
-            console.log('요일별 평균값:', weekdayLabels.map((day, i) => `${day}: ${weekdayValues[i]}h`));
+            console.log('요일별 평균값(분):', weekdayLabels.map((day, i) => {
+                const mins = weekdayValues[i];
+                const hours = Math.floor(mins / 60);
+                const minutes = Math.round(mins % 60);
+                return `${day}: ${hours}시간 ${minutes}분`;
+            }));
             const vacationData = getTotalVacationByMonth(currentCeoMonth);
             ceoVacationDetails = vacationData.details;
             ceoMissingDetails = Object.entries(missingStats).filter(([name, count]) => count > 0).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
@@ -692,4 +707,3 @@
     </script>
 </body>
 </html>
-
