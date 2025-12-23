@@ -222,15 +222,15 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 italic"># 조직별 초과근무 비중</h3>
-                            <span class="text-xs text-gray-400">팀 단위 합계</span>
+                            <h3 class="text-lg font-bold text-gray-800 italic"># 조직별 초과근무 비율</h3>
+                            <span class="text-xs text-gray-400">전체 100% 기준</span>
                         </div>
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoTeamChart"></canvas></div>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 italic"># 인원별 초과근무 비중</h3>
-                            <span class="text-xs text-gray-400">전체 대비 점유율</span>
+                            <h3 class="text-lg font-bold text-gray-800 italic"># 인원별 초과근무 비율</h3>
+                            <span class="text-xs text-gray-400">전체 100% 기준</span>
                         </div>
                         <div class="h-[300px] flex items-center justify-center"><canvas id="ceoDeptChart"></canvas></div>
                     </div>
@@ -514,12 +514,31 @@
 
         function ceoFormatHours(mins) { return (mins / 60).toFixed(1); }
         
+        // 퍼센트 합계를 정확히 100.0%로 조정
+        function adjustPercentsTo100(values) {
+            if (values.length === 0) return values;
+            
+            // 소수점 첫째 자리로 반올림
+            const rounded = values.map(v => Math.round(v * 10) / 10);
+            
+            // 합계 계산
+            const sum = rounded.reduce((a, b) => a + b, 0);
+            
+            // 100과의 차이 계산
+            const diff = Math.round((100 - sum) * 10) / 10;
+            
+            if (diff !== 0) {
+                // 가장 큰 값에 차이를 더해서 100%로 맞춤
+                const maxIndex = rounded.indexOf(Math.max(...rounded));
+                rounded[maxIndex] = Math.round((rounded[maxIndex] + diff) * 10) / 10;
+            }
+            
+            return rounded;
+        }
+        
         function formatMinutesToHoursMinutes(minutes) {
             const hours = Math.floor(minutes / 60);
             const mins = Math.round(minutes % 60);
-            if (mins === 60) {
-                return `${hours + 1}시간`;
-            }
             if (mins === 0) {
                 return `${hours}시간`;
             }
@@ -547,15 +566,142 @@
             if (n === '품질책임팀장' || n === '품질책임팀') return '품질책임팀';
             return '기타';
         }
+        
+        // 조직별 색상 매핑
+        const TEAM_COLORS = {
+            '개발팀': '#3b82f6',      // 파랑
+            '경영지원팀': '#10b981',  // 초록
+            '기획1팀': '#f59e0b',     // 주황
+            '기획2팀': '#ef4444',     // 빨강
+            '메디컬팀': '#8b5cf6',    // 보라
+            '품질책임팀': '#6366f1',  // 인디고
+            '기타': '#94a3b8'         // 회색
+        };
+        
+        // 퍼센트를 정확히 100.0%로 만드는 함수
+        function adjustPercentsTo100(values) {
+            if (values.length === 0) return values;
+            
+            const total = values.reduce((sum, v) => sum + v, 0);
+            if (total === 0) return values;
+            
+            // 반올림
+            const rounded = values.map(p => Math.round(p * 10) / 10);
+            
+            // 합계 계산
+            const sum = rounded.reduce((s, v) => s + v, 0);
+            
+            // 100과의 차이
+            const diff = Math.round((100 - sum) * 10) / 10;
+            
+            if (diff !== 0) {
+                // 가장 큰 값에 차이를 더함
+                const maxIndex = rounded.indexOf(Math.max(...rounded));
+                rounded[maxIndex] = Math.round((rounded[maxIndex] + diff) * 10) / 10;
+            }
+            
+            return rounded;
+        }
+        
+        // 부서가 속한 조직 찾기 (동적 매핑 사용)
+        let currentDeptToTeamMap = {};
+        
+        function getDeptTeamCategory(deptName) {
+            return currentDeptToTeamMap[deptName] || '기타';
+        }
 
         function ceoInitCharts(deptData, teamData, trendData) {
             console.log('차트 초기화 - 요일별 데이터:', trendData);
+            
+            // 부서별 차트 (도넛 차트) - 조직 색상 적용
             const ctxDept = document.getElementById('ceoDeptChart').getContext('2d');
             if (ceoDeptChart) ceoDeptChart.destroy();
-            ceoDeptChart = new Chart(ctxDept, { type: 'doughnut', data: { labels: deptData.labels, datasets: [{ data: deptData.values, backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#6366f1','#94a3b8'], borderWidth: 0, hoverOffset: 20 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 10 } } } }, cutout: '65%' } });
+            
+            // 부서별 색상을 조직에 맞춰 설정
+            const deptColors = deptData.labels.map(deptName => {
+                const teamCat = getDeptTeamCategory(deptName);
+                return TEAM_COLORS[teamCat] || TEAM_COLORS['기타'];
+            });
+            
+            ceoDeptChart = new Chart(ctxDept, { 
+                type: 'doughnut', 
+                data: { 
+                    labels: deptData.labels, 
+                    datasets: [{ 
+                        data: deptData.values, 
+                        backgroundColor: deptColors,
+                        borderWidth: 0, 
+                        hoverOffset: 20 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                usePointStyle: true, 
+                                padding: 15, 
+                                font: { size: 10 } 
+                            } 
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return ` ${label}: ${value.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    }, 
+                    cutout: '65%' 
+                } 
+            });
+            
+            // 조직별 차트 (파이 차트) - 조직 색상 적용
             const ctxTeam = document.getElementById('ceoTeamChart').getContext('2d');
             if (ceoTeamChart) ceoTeamChart.destroy();
-            ceoTeamChart = new Chart(ctxTeam, { type: 'pie', data: { labels: teamData.labels, datasets: [{ data: teamData.values, backgroundColor: ['#2563eb','#10b981','#f59e0b','#ef4444','#8b5cf6','#6366f1','#475569'], borderWidth: 2, borderColor: '#fff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 11, weight: 'bold' } } } } } });
+            
+            // 조직별 색상 설정
+            const teamColors = teamData.labels.map(teamName => TEAM_COLORS[teamName] || TEAM_COLORS['기타']);
+            
+            ceoTeamChart = new Chart(ctxTeam, { 
+                type: 'pie', 
+                data: { 
+                    labels: teamData.labels, 
+                    datasets: [{ 
+                        data: teamData.values, 
+                        backgroundColor: teamColors,
+                        borderWidth: 2, 
+                        borderColor: '#fff' 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                usePointStyle: true, 
+                                padding: 15, 
+                                font: { size: 11, weight: 'bold' } 
+                            } 
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return ` ${label}: ${value.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    } 
+                } 
+            });
             const ctxTrend = document.getElementById('ceoTrendChart').getContext('2d');
             if (ceoTrendChart) ceoTrendChart.destroy();
             ceoTrendChart = new Chart(ctxTrend, { 
@@ -616,7 +762,51 @@
             const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
             const weekdayData = { '월': [], '화': [], '수': [], '목': [], '금': [], '토': [], '일': [] };
             const dailyPersonData = {}; // 날짜별, 사람별 근무시간 합산용
+            const deptToTeamMap = {}; // 부서-조직 동적 매핑
             let totalOverMins = 0, totalMissingCount = 0;
+            
+            // 첫 패스: 부서-조직 매핑 구축
+            data.forEach(row => {
+                const dept = row['회사내 이름'];
+                const org = row['조직'];
+                if (dept && org && !deptToTeamMap[dept]) {
+                    const orgStr = String(org).trim();
+                    let team = '기타';
+                    
+                    // Guy는 CEO지만 경영지원팀으로 분류 (특별 케이스)
+                    if (dept === 'Guy') {
+                        team = '경영지원팀';
+                    }
+                    // CEO 제외
+                    else if (orgStr.includes('CEO') && !orgStr.includes('경영지원')) {
+                        team = 'EXCLUDED';
+                    }
+                    // 조직명에서 팀 추출
+                    else if (orgStr.includes('개발팀') || orgStr === 'CTO') {
+                        team = '개발팀';
+                    }
+                    else if (orgStr.includes('경영지원팀')) {
+                        team = '경영지원팀';
+                    }
+                    else if (orgStr.includes('기획1팀')) {
+                        team = '기획1팀';
+                    }
+                    else if (orgStr.includes('기획2팀') || orgStr.includes('COO')) {
+                        team = '기획2팀';
+                    }
+                    else if (orgStr.includes('메디컬팀')) {
+                        team = '메디컬팀';
+                    }
+                    else if (orgStr.includes('품질책임팀')) {
+                        team = '품질책임팀';
+                    }
+                    
+                    deptToTeamMap[dept] = team;
+                }
+            });
+            
+            console.log('부서-조직 매핑:', deptToTeamMap);
+            
             data.forEach(row => {
                 const name = row['이름'], dept = row['회사내 이름'] || '미분류';
                 const dateStr = row['날짜'];
@@ -632,7 +822,8 @@
                 const dayOver = Math.max(0, workMins - 480);
                 users[userId].overMins += dayOver; users[userId].totalMins += workMins;
                 if (!departments[dept]) departments[dept] = 0; departments[dept] += dayOver;
-                const teamCat = ceoGetTeamCategory(row['조직']);
+                
+                const teamCat = deptToTeamMap[dept] || '기타';
                 if (teamCat !== 'EXCLUDED') { if (!teams[teamCat]) teams[teamCat] = 0; teams[teamCat] += dayOver; }
                 
                 // 날짜별, 사람별로 근무시간 합산
@@ -699,8 +890,21 @@
             document.getElementById('ceoPopupNameList').innerHTML = userList.sort((a,b) => a.name.localeCompare(b.name)).map(u => `<div class="flex justify-between items-center py-2 border-b border-gray-50 hover:bg-gray-50 px-1 rounded"><span class="font-bold text-gray-700">${u.name}</span><span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">${u.dept}</span></div>`).join('');
             const top5 = [...userList].sort((a,b) => b.overMins - a.overMins).slice(0, 5);
             document.getElementById('ceoTopList').innerHTML = top5.map((u,i) => `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl"><div class="flex items-center gap-3"><span class="w-7 h-7 flex items-center justify-center bg-gray-200 rounded-full text-[10px] font-bold">${i+1}</span><div><p class="text-sm font-bold text-gray-800">${u.name}</p><p class="text-[10px] text-gray-500">${u.dept}</p></div></div><div class="text-right"><p class="text-red-600 text-sm font-bold">${ceoFormatHours(u.overMins)}h</p></div></div>`).join('');
-            const deptLabels = Object.keys(departments), deptValues = Object.values(departments).map(v => ceoFormatHours(v));
-            const teamLabels = Object.keys(teams), teamValues = Object.values(teams).map(v => ceoFormatHours(v));
+            const deptLabels = Object.keys(departments);
+            const deptValuesRaw = Object.values(departments);
+            const deptTotal = deptValuesRaw.reduce((sum, v) => sum + v, 0);
+            const deptValuesPercent = deptTotal > 0 ? deptValuesRaw.map(v => (v / deptTotal * 100)) : deptValuesRaw;
+            const deptValues = adjustPercentsTo100(deptValuesPercent);
+            
+            const teamLabels = Object.keys(teams);
+            const teamValuesRaw = Object.values(teams);
+            const teamTotal = teamValuesRaw.reduce((sum, v) => sum + v, 0);
+            const teamValuesPercent = teamTotal > 0 ? teamValuesRaw.map(v => (v / teamTotal * 100)) : teamValuesRaw;
+            const teamValues = adjustPercentsTo100(teamValuesPercent);
+            
+            // 부서-조직 매핑을 전역 변수에 저장 (차트 색상 매핑에 사용)
+            currentDeptToTeamMap = deptToTeamMap;
+            
             ceoInitCharts({ labels: deptLabels, values: deptValues }, { labels: teamLabels, values: teamValues }, { labels: weekdayLabels, values: weekdayValues });
         }
 
@@ -710,6 +914,3 @@
     </script>
 </body>
 </html>
-
-
-
