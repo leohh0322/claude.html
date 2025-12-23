@@ -92,60 +92,67 @@
                 </div>
                 <div class="month-tabs" id="memberMonthTabs">
                     <div class="month-tab active" data-month="9월" onclick="memberSwitchMonth('9월')">📅 9월</div>
-                    <div class="month-tab" data-month="10월" onclick="memberSwitchMonth('10월')">🍂 10월</div>
-                    <div class="month-tab" data-month="11월" onclick="memberSwitchMonth('11월')">🍁 11월</div>
-                    <div class="month-tab" data-month="12월" onclick="memberSwitchMonth('12월')">❄️ 12월</div>
+                    <div class="month-tab" data-month="10월" onclick="memberSwitchMonth('10월')">📅 10월</div>
+                    <div class="month-tab" data-month="11월" onclick="memberSwitchMonth('11월')">📅 11월</div>
                 </div>
-                <div class="p-6 md:p-8">
-                    <!-- 잔여 연차 카드 -->
-                    <div class="remain-vacation-card">
-                        <div class="label">💸 잔여 연차</div>
-                        <div class="value" id="memberRemainVacation">계산 중...</div>
-                        <div class="sub-value">올해 남은 유급 휴가 일수</div>
-                    </div>
-
-                    <!-- 통계 카드 그리드 -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                        <!-- 근무일 -->
-                        <div class="info-card blue">
-                            <div class="label">📅 근무일</div>
-                            <div class="value" id="memberWorkDays">-</div>
-                            <div class="sub-value">휴일정책이 없는 일수</div>
+                <div class="p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="info-card blue" onclick="memberShowDetail('workDays')">
+                                    <div class="label">📅 근무일</div>
+                                    <div class="value" id="member_val_workDays">-</div>
+                                    <div class="sub-value">중복 제외 근무 일수</div>
+                                </div>
+                                <div class="info-card blue">
+                                    <div class="label">⏱️ 기준 근로시간</div>
+                                    <div class="value" id="member_val_stdHours">-</div>
+                                    <div class="sub-value">근무일 × 8시간</div>
+                                </div>
+                                <div class="info-card purple" onclick="memberShowDetail('totalHours')">
+                                    <div class="label">💼 총 근무시간</div>
+                                    <div class="value" id="member_val_totalHours">-</div>
+                                    <div class="sub-value">실제 근무 합계</div>
+                                </div>
+                                <div class="info-card red" onclick="memberShowDetail('overTime')">
+                                    <div class="label">🔥 초과 근무</div>
+                                    <div class="value" id="member_val_overTime">-</div>
+                                    <div class="sub-value">총 근무 - 기준 시간</div>
+                                </div>
+                                <div class="info-card green" onclick="memberShowDetail('vacation')">
+                                    <div class="label">🏖️ 휴가 사용</div>
+                                    <div class="value" id="member_val_vacation">-</div>
+                                    <div class="sub-value">이번 달 사용한 연차</div>
+                                </div>
+                                <div class="info-card red" onclick="memberShowDetail('missing')">
+                                    <div class="label">⚠️ 기록 누락</div>
+                                    <div class="value" id="member_val_missing">-</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="info-card" onclick="memberShowDetail('avgIn')">
+                                    <div class="label">🌅 평균 출근 시각</div>
+                                    <div class="value" id="member_val_avgIn">-</div>
+                                </div>
+                                <div class="info-card" onclick="memberShowDetail('avgOut')">
+                                    <div class="label">🌆 평균 퇴근 시각</div>
+                                    <div class="value" id="member_val_avgOut">-</div>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <!-- 총 근무시간 (휴가 사용시간 포함) -->
-                        <div class="info-card green">
-                            <div class="label">⏰ 총 근무시간</div>
-                            <div class="value" id="memberTotalWorkHours">-</div>
-                            <div class="sub-value">근무시간 + 휴가시간</div>
-                        </div>
-                        
-                        <!-- 연장 근무 -->
-                        <div class="info-card red">
-                            <div class="label">🔥 연장 근무</div>
-                            <div class="value" id="memberOvertimeHours">-</div>
-                            <div class="sub-value">8시간 초과 근무 시간</div>
-                        </div>
-                        
-                        <!-- 휴가 사용 -->
-                        <div class="info-card purple">
-                            <div class="label">🏖️ 휴가 사용</div>
-                            <div class="value" id="memberVacationUsed">-</div>
-                            <div class="sub-value">사용한 유급 휴가</div>
-                        </div>
-                    </div>
-
-                    <!-- 상세 통계 -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="info-card cyan" onclick="memberShowModal('dailyChart')">
-                            <div class="label">📊 일별 근무 시간</div>
-                            <div class="value" id="memberAvgDaily">-</div>
-                            <div class="sub-value">평균 일일 근무시간</div>
-                        </div>
-                        <div class="info-card red" onclick="memberShowModal('overtimeChart')">
-                            <div class="label">⏱️ 연장 근무 분포</div>
-                            <div class="value" id="memberOvertimeDays">-</div>
-                            <div class="sub-value">연장 근무 일수</div>
+                        <div class="lg:col-span-1">
+                            <!-- 잔여 연차 카드 -->
+                            <div class="remain-vacation-card">
+                                <div class="label">💎 잔여 연차</div>
+                                <div class="value" id="member_val_remainVacation">-</div>
+                                <div class="sub-value">현재 사용 가능한 연차</div>
+                            </div>
+                            
+                            <!-- 근무 시간 분석 차트 -->
+                            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                                <h3 class="text-lg font-bold text-gray-800 mb-6 text-center">📈 근무 시간 분석</h3>
+                                <div style="height: 320px;"><canvas id="memberWorkChart"></canvas></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,376 +163,348 @@
     <!-- CEO 뷰 -->
     <div id="ceoView" class="view">
         <button class="nav-button" onclick="showView('member')">← 구성원용으로 이동</button>
-        <div class="p-6 md:p-10">
-            <div class="max-w-7xl mx-auto">
-                <div class="bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-2xl p-8 mb-8">
-                    <h1 class="text-3xl font-bold mb-2">👑 CEO 대시보드</h1>
-                    <p class="opacity-90">전체 팀의 근무 현황과 통계를 한눈에 확인하세요</p>
-                </div>
-
-                <div class="month-tabs" id="ceoMonthTabs">
-                    <div class="month-tab active" data-month="9월" onclick="ceoSwitchMonth('9월')">📅 9월</div>
-                    <div class="month-tab" data-month="10월" onclick="ceoSwitchMonth('10월')">🍂 10월</div>
-                    <div class="month-tab" data-month="11월" onclick="ceoSwitchMonth('11월')">🍁 11월</div>
-                    <div class="month-tab" data-month="12월" onclick="ceoSwitchMonth('12월')">❄️ 12월</div>
-                </div>
-
-                <!-- 핵심 지표 -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                    <div class="stat-card clickable bg-white p-6 rounded-xl shadow-md hover:shadow-lg">
-                        <div class="label">👥 총 인원</div>
-                        <div class="value" id="ceo_stat_totalPeople">-</div>
-                        <div class="sub-value">전체 구성원</div>
-                        <div class="member-list-popup" id="ceoPopupNameList"></div>
-                    </div>
-                    <div class="stat-card bg-white p-6 rounded-xl shadow-md hover:shadow-lg">
-                        <div class="label">⏰ 총 연장근무</div>
-                        <div class="value" id="ceo_stat_totalOver">-</div>
-                        <div class="sub-value">전체 초과근무 시간</div>
-                    </div>
-                    <div class="stat-card clickable bg-white p-6 rounded-xl shadow-md hover:shadow-lg" onclick="ceoShowModal('missingDetails')">
-                        <div class="label">⚠️ 미입력 건수</div>
-                        <div class="value" id="ceo_stat_missingCount">-</div>
-                        <div class="sub-value">출퇴근 미기록</div>
-                    </div>
-                    <div class="stat-card clickable bg-white p-6 rounded-xl shadow-md hover:shadow-lg" onclick="ceoShowModal('vacationDetails')">
-                        <div class="label">🏖️ 총 휴가사용</div>
-                        <div class="value" id="ceo_stat_totalVacation">-</div>
-                        <div class="sub-value">전체 휴가 사용일수</div>
-                    </div>
-                </div>
-
-                <!-- 차트 섹션 -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-lg font-bold mb-4 text-gray-800">🏢 부서별 초과근무 분포</h3>
-                        <div class="h-64"><canvas id="ceoDeptChart"></canvas></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-lg font-bold mb-4 text-gray-800">👥 팀별 초과근무 분포</h3>
-                        <div class="h-64"><canvas id="ceoTeamChart"></canvas></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-lg font-bold mb-4 text-gray-800">📊 요일별 평균 근무시간</h3>
-                        <div class="h-64"><canvas id="ceoTrendChart"></canvas></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-lg font-bold mb-4 text-gray-800">🔥 TOP 5 초과근무</h3>
-                        <div id="ceoTopList" class="space-y-3"></div>
-                    </div>
-                </div>
+        
+        <!-- CEO 휴가 상세 모달 -->
+        <div class="modal-overlay" id="ceoVacationModalOverlay">
+            <div class="modal-content">
+                <span class="modal-close" id="ceoVacationModalClose">&times;</span>
+                <div class="modal-title" id="ceoVacationModalTitle">🏖️ 휴가 사용 상세</div>
+                <div class="modal-list-wrapper" id="ceoVacationModalList"></div>
             </div>
         </div>
-
-        <!-- CEO 모달 -->
-        <div class="modal-overlay" id="ceoModalOverlay">
+        
+        <!-- CEO 근무 기록 누락 모달 -->
+        <div class="modal-overlay" id="ceoMissingModalOverlay">
             <div class="modal-content">
-                <span class="modal-close" id="ceoModalClose">&times;</span>
-                <div class="modal-title" id="ceoModalTitle">상세 내역</div>
-                <div class="modal-list-wrapper" id="ceoModalList"></div>
+                <span class="modal-close" id="ceoMissingModalClose">&times;</span>
+                <div class="modal-title" id="ceoMissingModalTitle">⚠️ 근무 기록 누락 상세</div>
+                <div class="modal-list-wrapper" id="ceoMissingModalList"></div>
+            </div>
+        </div>
+        
+        <div class="p-6 md:p-10">
+            <div class="max-w-7xl mx-auto">
+                <header class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-6">
+                    <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                        <span class="bg-blue-600 p-2 rounded-lg text-white text-xl">📊</span>
+                        전사 근태 분석 대시보드
+                    </h1>
+                </header>
+                <div class="month-tabs" id="ceoMonthTabs">
+                    <div class="month-tab active" data-month="9월" onclick="ceoSwitchMonth('9월')">📅 9월</div>
+                    <div class="month-tab" data-month="10월" onclick="ceoSwitchMonth('10월')">📅 10월</div>
+                    <div class="month-tab" data-month="11월" onclick="ceoSwitchMonth('11월')">📅 11월</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100 cursor-pointer">
+                        <p class="text-sm font-medium text-gray-500 mb-1">총 분석 인원</p>
+                        <h3 id="ceo_stat_totalPeople" class="text-3xl font-bold text-gray-800">- 명</h3>
+                        <div class="member-list-popup" id="ceoMemberPopup">
+                            <p class="text-xs font-bold text-blue-600 mb-3 border-b pb-2 sticky top-0 bg-white">분석된 구성원 명단</p>
+                            <div id="ceoPopupNameList" class="space-y-2 text-sm text-gray-600"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
+                        <p class="text-sm font-medium text-gray-500 mb-1">총 초과근무 시간</p>
+                        <h3 id="ceo_stat_totalOver" class="text-3xl font-bold text-red-600">- 시간</h3>
+                    </div>
+                    <div class="stat-card clickable bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500" onclick="showCeoMissingModal()">
+                        <p class="text-sm font-medium text-gray-500 mb-1">⚠️ 근무 기록 누락</p>
+                        <h3 id="ceo_stat_missingCount" class="text-3xl font-bold text-amber-600">- 건</h3>
+                        <p class="text-xs text-gray-400 mt-1">클릭하여 상세 보기</p>
+                    </div>
+                    <div class="stat-card clickable bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-green-500" onclick="showCeoVacationModal()">
+                        <p class="text-sm font-medium text-gray-500 mb-1">🏖️ 총 휴가 사용</p>
+                        <h3 id="ceo_stat_totalVacation" class="text-3xl font-bold text-green-600">- 일</h3>
+                        <p class="text-xs text-gray-400 mt-1">클릭하여 상세 보기</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-800 italic"># 조직별 초과근무 비중</h3>
+                            <span class="text-xs text-gray-400">팀 단위 합계</span>
+                        </div>
+                        <div class="h-[300px] flex items-center justify-center"><canvas id="ceoTeamChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-800 italic"># 인원별 초과근무 비중</h3>
+                            <span class="text-xs text-gray-400">전체 대비 점유율</span>
+                        </div>
+                        <div class="h-[300px] flex items-center justify-center"><canvas id="ceoDeptChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 italic"># 초과근무 Top 5 구성원</h3>
+                        <div id="ceoTopList" class="space-y-4"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 italic"># 요일별 근무 강도 추이</h3>
+                        <div class="h-[300px]"><canvas id="ceoTrendChart"></canvas></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn4V02FdTxHjzXQPgV-_bZeWgSZK9eKcFsV7VLGjR5dqOuJr-TGJNjnFM-FE7xCGjJjGQZ5qYNnKWy/pub?output=csv';
-        
-        let globalData = null;
-        let currentMemberMonth = '9월';
-        let currentCeoMonth = '9월';
-        let ceoDeptChart = null;
-        let ceoTeamChart = null;
-        let ceoTrendChart = null;
-        let memberModalChart = null;
+        // ===== Google Sheets URL 설정 =====
+        const SHEET_URLS = {
+            '9월': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxBvVil1szQqCeFl2qOVYnSSK16ZtlRlUji8sTtdgzAKLa4M73ngCHPHh2oewE-GAP5VQLsLV8f_wT/pub?gid=1760267560&single=true&output=csv',
+            '10월': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxBvVil1szQqCeFl2qOVYnSSK16ZtlRlUji8sTtdgzAKLa4M73ngCHPHh2oewE-GAP5VQLsLV8f_wT/pub?gid=1965095219&single=true&output=csv',
+            '11월': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxBvVil1szQqCeFl2qOVYnSSK16ZtlRlUji8sTtdgzAKLa4M73ngCHPHh2oewE-GAP5VQLsLV8f_wT/pub?gid=0&single=true&output=csv',
+            '연차': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxBvVil1szQqCeFl2qOVYnSSK16ZtlRlUji8sTtdgzAKLa4M73ngCHPHh2oewE-GAP5VQLsLV8f_wT/pub?gid=1588070847&single=true&output=csv'
+        };
+
+        const DATA_CACHE = {};
+        let VACATION_DATA = [];
+        let currentMemberMonth = '9월', currentCeoMonth = '9월';
         let ceoVacationDetails = [];
         let ceoMissingDetails = [];
+        let selectedUserKey = null;
 
-        async function initializeData() {
-            console.log('🔄 데이터 로딩 시작...');
+        async function loadSheetData(key) {
+            if (DATA_CACHE[key]) return DATA_CACHE[key];
+            const url = SHEET_URLS[key];
+            if (!url) return [];
             try {
-                const response = await fetch(SHEET_URL);
+                const response = await fetch(url);
                 const csvText = await response.text();
-                const parsedData = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-                globalData = parsedData.data;
-                console.log('✅ 데이터 로딩 완료:', globalData.length, '건');
-                memberUpdateView();
-                ceoUpdateView();
-            } catch (error) {
-                console.error('❌ 데이터 로딩 실패:', error);
-                alert('데이터를 불러올 수 없습니다. 네트워크 연결을 확인해 주세요.');
-            } finally {
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }
+                return new Promise((resolve) => {
+                    Papa.parse(csvText, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: (results) => { DATA_CACHE[key] = results.data; resolve(results.data); }
+                    });
+                });
+            } catch (error) { console.error(`${key} 데이터 로드 실패:`, error); return []; }
         }
 
-        function showView(viewName) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewName + 'View').classList.add('active');
-        }
-
-        // === 구성원 뷰 관련 함수들 ===
-
-        function memberSwitchMonth(month) {
-            currentMemberMonth = month;
-            document.querySelectorAll('#memberMonthTabs .month-tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.dataset.month === month) tab.classList.add('active');
-            });
-            memberUpdateView();
-        }
-
-        function memberUpdateView() {
-            if (!globalData) return;
-            console.log(`🔄 구성원 뷰 업데이트 - ${currentMemberMonth}`);
-            const monthData = globalData.filter(row => row['월'] === currentMemberMonth);
-            memberPopulateUserSelect(monthData);
-            memberUpdateStatistics();
-        }
-
-        function memberPopulateUserSelect(monthData) {
-            const userSelect = document.getElementById('memberUserSelect');
-            const users = [...new Set(monthData.map(row => row['이름']).filter(name => name && name.trim() !== ''))].sort();
-            userSelect.innerHTML = '<option value="">대상자 선택</option>' + users.map(user => `<option value="${user}">${user}</option>`).join('');
-            userSelect.disabled = false;
-            userSelect.onchange = () => memberUpdateStatistics();
-        }
-
-        function memberUpdateStatistics() {
-            const selectedUser = document.getElementById('memberUserSelect').value;
-            if (!selectedUser || !globalData) return;
-
-            console.log(`📊 ${selectedUser} 통계 계산 중...`);
-            const userData = globalData.filter(row => row['이름'] === selectedUser && row['월'] === currentMemberMonth);
-            
-            // 근무일 계산: 휴일정책 열이 비어있는 날들의 수
-            const workDays = userData.filter(row => {
-                const holidayPolicy = row['휴일정책'];
-                return !holidayPolicy || holidayPolicy.trim() === '';
-            }).length;
-
-            // 휴가 사용 시간 계산 (분 단위)
-            let vacationMinutes = 0;
-            userData.forEach(row => {
-                const vacationPolicy = row['휴가정책'];
-                if (vacationPolicy && vacationPolicy.trim() !== '') {
-                    // 휴가정책이 있는 경우 8시간(480분)으로 계산
-                    vacationMinutes += 480;
-                }
-            });
-
-            // 기존 근무시간 + 휴가 사용시간
-            let totalWorkMinutes = 0;
-            let overtimeMinutes = 0;
-            let overtimeDays = 0;
-            const dailyWork = [];
-
-            userData.forEach(row => {
-                const workTime = parseToMinutes(row['총 근무']);
-                totalWorkMinutes += workTime;
-                
-                const overtime = Math.max(0, workTime - 480); // 8시간 초과 계산
-                overtimeMinutes += overtime;
-                if (overtime > 0) overtimeDays++;
-                
-                if (workTime > 0) dailyWork.push(workTime);
-            });
-
-            // 총 근무시간에 휴가 사용시간 추가
-            const totalMinutesWithVacation = totalWorkMinutes + vacationMinutes;
-
-            // 잔여 연차 계산 (가정: 연 15일)
-            const totalVacationDays = userData.filter(row => {
-                const vacPolicy = row['휴가정책'];
-                return vacPolicy && vacPolicy.trim() !== '';
-            }).length;
-            const remainingVacation = Math.max(0, 15 - totalVacationDays);
-
-            // 평균 일일 근무시간
-            const avgDaily = dailyWork.length > 0 ? (dailyWork.reduce((a, b) => a + b, 0) / dailyWork.length) : 0;
-
-            // 화면 업데이트
-            document.getElementById('memberWorkDays').textContent = `${workDays} 일`;
-            document.getElementById('memberTotalWorkHours').textContent = `${formatHours(totalMinutesWithVacation)} h`;
-            document.getElementById('memberOvertimeHours').textContent = `${formatHours(overtimeMinutes)} h`;
-            document.getElementById('memberVacationUsed').textContent = `${totalVacationDays} 일`;
-            document.getElementById('memberRemainVacation').textContent = `${remainingVacation} 일`;
-            document.getElementById('memberAvgDaily').textContent = `${formatHours(avgDaily)} h`;
-            document.getElementById('memberOvertimeDays').textContent = `${overtimeDays} 일`;
-
-            document.getElementById('memberReportTitle').textContent = `📊 ${selectedUser}님의 ${currentMemberMonth} 근태 리포트`;
-
-            console.log(`✅ ${selectedUser} 통계 계산 완료`);
-            console.log(`근무일: ${workDays}일, 총근무시간: ${formatHours(totalMinutesWithVacation)}h (기존: ${formatHours(totalWorkMinutes)}h + 휴가: ${formatHours(vacationMinutes)}h)`);
-        }
-
-        function memberShowModal(type) {
-            const selectedUser = document.getElementById('memberUserSelect').value;
-            if (!selectedUser) return;
-
-            const userData = globalData.filter(row => row['이름'] === selectedUser && row['월'] === currentMemberMonth);
-            const modal = document.getElementById('memberModalOverlay');
-            const title = document.getElementById('memberModalTitle');
-            const listContainer = document.getElementById('memberModalList');
-
-            if (type === 'dailyChart') {
-                title.textContent = `${selectedUser}님의 일별 근무시간`;
-                const dailyData = userData.map(row => ({
-                    date: row['날짜'],
-                    work: parseToMinutes(row['총 근무'])
-                })).filter(d => d.work > 0);
-
-                memberCreateChart(dailyData.map(d => d.date), dailyData.map(d => d.work / 60), '일별 근무시간 (h)');
-                listContainer.innerHTML = dailyData.map(d => `
-                    <div class="modal-list-item">
-                        <span>${d.date}</span>
-                        <span>${formatHours(d.work)} h</span>
-                    </div>
-                `).join('');
-
-            } else if (type === 'overtimeChart') {
-                title.textContent = `${selectedUser}님의 연장근무 내역`;
-                const overtimeData = userData.map(row => ({
-                    date: row['날짜'],
-                    work: parseToMinutes(row['총 근무']),
-                    overtime: Math.max(0, parseToMinutes(row['총 근무']) - 480)
-                })).filter(d => d.overtime > 0);
-
-                memberCreateChart(overtimeData.map(d => d.date), overtimeData.map(d => d.overtime / 60), '연장근무 시간 (h)');
-                listContainer.innerHTML = overtimeData.map(d => `
-                    <div class="modal-list-item">
-                        <span>${d.date}</span>
-                        <span>총 ${formatHours(d.work)}h → 연장 ${formatHours(d.overtime)}h</span>
-                    </div>
-                `).join('');
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        function memberCreateChart(labels, data, label) {
-            const ctx = document.getElementById('memberModalChart').getContext('2d');
-            if (memberModalChart) memberModalChart.destroy();
-            memberModalChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: label,
-                        data: data,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true },
-                        x: { display: labels.length <= 15 }
-                    }
-                }
-            });
-        }
-
-        // 모달 이벤트 리스너
-        document.getElementById('memberModalClose').onclick = () => {
-            document.getElementById('memberModalOverlay').style.display = 'none';
-        };
-
-        // === CEO 뷰 관련 함수들 ===
-
-        function ceoSwitchMonth(month) {
-            currentCeoMonth = month;
-            document.querySelectorAll('#ceoMonthTabs .month-tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.dataset.month === month) tab.classList.add('active');
-            });
-            ceoUpdateView();
-        }
-
-        function ceoUpdateView() {
-            if (!globalData) return;
-            console.log(`🔄 CEO 뷰 업데이트 - ${currentCeoMonth}`);
-            const monthData = globalData.filter(row => row['월'] === currentCeoMonth);
-            ceoProcessExcel(monthData);
-        }
-
-        function ceoShowModal(type) {
-            const modal = document.getElementById('ceoModalOverlay');
-            const title = document.getElementById('ceoModalTitle');
-            const listContainer = document.getElementById('ceoModalList');
-
-            if (type === 'vacationDetails') {
-                title.textContent = '휴가 사용 상세 내역';
-                listContainer.innerHTML = ceoVacationDetails.map(item => `
-                    <div class="modal-list-item">
-                        <span>${item.name}</span>
-                        <span>${item.days} 일</span>
-                    </div>
-                `).join('');
-            } else if (type === 'missingDetails') {
-                title.textContent = '출퇴근 미입력 상세 내역';
-                listContainer.innerHTML = ceoMissingDetails.map(item => `
-                    <div class="modal-list-item">
-                        <span>${item.name}</span>
-                        <span class="text-red-600">${item.count} 건</span>
-                    </div>
-                `).join('');
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        document.getElementById('ceoModalClose').onclick = () => {
-            document.getElementById('ceoModalOverlay').style.display = 'none';
-        };
-
-        // === 유틸리티 함수들 ===
-
-        function parseToMinutes(timeStr) {
-            if (!timeStr || typeof timeStr !== 'string') return 0;
-            const parts = timeStr.trim().split(':');
-            if (parts.length >= 2) {
-                const hours = parseInt(parts[0]) || 0;
-                const minutes = parseInt(parts[1]) || 0;
-                return hours * 60 + minutes;
-            }
-            return 0;
-        }
-
-        function formatHours(minutes) {
-            return (minutes / 60).toFixed(1);
+        function getVacationInfo(name, month) {
+            const monthCol = month;
+            const userRow = VACATION_DATA.find(row => row['이름'] === name);
+            if (!userRow) return { used: 0, remain: 0 };
+            return { used: parseFloat(userRow[monthCol]) || 0, remain: parseFloat(userRow['잔여 연차']) || 0 };
         }
 
         function getTotalVacationByMonth(month) {
-            if (!globalData) return { total: 0, details: [] };
-            
-            const monthData = globalData.filter(row => row['월'] === month);
-            const vacationStats = {};
-
-            monthData.forEach(row => {
-                const name = row['이름'];
-                const vacationPolicy = row['휴가정책'];
-                
-                if (name && vacationPolicy && vacationPolicy.trim() !== '') {
-                    if (!vacationStats[name]) vacationStats[name] = 0;
-                    vacationStats[name]++;
-                }
+            const monthCol = month;
+            let total = 0;
+            const details = [];
+            VACATION_DATA.forEach(row => {
+                const name = row['이름'], used = parseFloat(row[monthCol]) || 0;
+                if (name && used > 0) { total += used; details.push({ name, used }); }
             });
-
-            const details = Object.entries(vacationStats).map(([name, days]) => ({ name, days }));
-            const total = details.reduce((sum, item) => sum + item.days, 0);
-
+            details.sort((a, b) => b.used - a.used);
             return { total, details };
         }
 
-        function parseToMinutes(val) {
+        async function initializeData() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            try {
+                VACATION_DATA = await loadSheetData('연차');
+                await loadSheetData('9월');
+                memberLoadMonth('9월');
+            } catch (error) { console.error('초기 데이터 로드 실패:', error); }
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showView(v) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            if (v === 'member') { document.getElementById('memberView').classList.add('active'); memberLoadMonth(currentMemberMonth); }
+            else if (v === 'ceo') { document.getElementById('ceoView').classList.add('active'); ceoLoadMonth(currentCeoMonth); }
+        }
+
+        function showCeoVacationModal() {
+            const overlay = document.getElementById('ceoVacationModalOverlay');
+            const title = document.getElementById('ceoVacationModalTitle');
+            const list = document.getElementById('ceoVacationModalList');
+            title.innerText = `🏖️ ${currentCeoMonth} 휴가 사용 상세`;
+            list.innerHTML = ceoVacationDetails.length === 0 
+                ? '<div class="text-center text-gray-400 py-4">휴가 사용 내역이 없습니다.</div>'
+                : ceoVacationDetails.map((item, idx) => `<div class="modal-list-item"><span class="flex items-center gap-2"><span class="w-6 h-6 flex items-center justify-center bg-green-100 text-green-600 rounded-full text-xs font-bold">${idx + 1}</span><span class="font-medium">${item.name}</span></span><span class="text-green-600 font-bold">${item.used}일</span></div>`).join('');
+            overlay.style.display = 'flex';
+        }
+
+        function showCeoMissingModal() {
+            const overlay = document.getElementById('ceoMissingModalOverlay');
+            const title = document.getElementById('ceoMissingModalTitle');
+            const list = document.getElementById('ceoMissingModalList');
+            title.innerText = `⚠️ ${currentCeoMonth} 근무 기록 누락 상세`;
+            list.innerHTML = ceoMissingDetails.length === 0 
+                ? '<div class="text-center text-gray-400 py-4">근무 기록 누락 내역이 없습니다.</div>'
+                : ceoMissingDetails.map((item, idx) => `<div class="modal-list-item"><span class="flex items-center gap-2"><span class="w-6 h-6 flex items-center justify-center bg-amber-100 text-amber-600 rounded-full text-xs font-bold">${idx + 1}</span><span class="font-medium">${item.name}</span></span><span class="text-amber-600 font-bold">${item.count}회</span></div>`).join('');
+            overlay.style.display = 'flex';
+        }
+
+        document.getElementById('ceoVacationModalClose').onclick = () => document.getElementById('ceoVacationModalOverlay').style.display = 'none';
+        document.getElementById('ceoMissingModalClose').onclick = () => document.getElementById('ceoMissingModalOverlay').style.display = 'none';
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('ceoVacationModalOverlay')) document.getElementById('ceoVacationModalOverlay').style.display = 'none';
+            if (e.target === document.getElementById('ceoMissingModalOverlay')) document.getElementById('ceoMissingModalOverlay').style.display = 'none';
+        });
+
+        // ===== 구성원 뷰 =====
+        let memberRawData = [], memberMyChart = null, memberModalChart = null, memberCurrentCalculatedData = null;
+
+        async function memberSwitchMonth(m) {
+            currentMemberMonth = m;
+            document.querySelectorAll('#memberMonthTabs .month-tab').forEach(t => { t.classList.remove('active'); t.classList.add('loading'); });
+            document.querySelector(`#memberMonthTabs .month-tab[data-month="${m}"]`).classList.add('active');
+            await memberLoadMonth(m);
+            document.querySelectorAll('#memberMonthTabs .month-tab').forEach(t => t.classList.remove('loading'));
+        }
+
+        async function memberLoadMonth(m) {
+            memberRawData = await loadSheetData(m);
+            if (!memberRawData.length) return;
+            const userSet = new Set(), uniqueUsers = [];
+            memberRawData.forEach(r => {
+                const name = r['이름'], compName = r['회사내 이름'] || '';
+                if (name) { const key = `${name}|${compName}`; if (!userSet.has(key)) { userSet.add(key); uniqueUsers.push({ key, displayName: compName ? `${name} (${compName})` : name }); } }
+            });
+            const sel = document.getElementById('memberUserSelect');
+            sel.innerHTML = '<option value="">대상자 선택</option>';
+            uniqueUsers.sort((a,b) => a.displayName.localeCompare(b.displayName)).forEach(u => { const o = document.createElement('option'); o.value = u.key; o.text = u.displayName; sel.appendChild(o); });
+            sel.disabled = false;
+            if (selectedUserKey && uniqueUsers.some(u => u.key === selectedUserKey)) { sel.value = selectedUserKey; memberUpdateUI(memberCalculateData(selectedUserKey)); }
+            else if (uniqueUsers.length > 0) { selectedUserKey = uniqueUsers[0].key; sel.value = selectedUserKey; memberUpdateUI(memberCalculateData(selectedUserKey)); }
+        }
+
+        function memberFormatMinutes(mins, style = 'text') {
+            if (!mins || mins === Infinity || mins === -Infinity) return '-';
+            const h = Math.floor(mins / 60), m = Math.round(mins % 60);
+            return style === 'colon' ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` : `${h}시간 ${m}분`;
+        }
+
+        function memberParseToMinutes(val) {
+            if (!val) return 0;
+            if (typeof val === 'number') return Math.round(val * 24 * 60);
+            if (typeof val === 'string') { const p = val.trim().split(':'); if (p.length >= 2) return parseInt(p[0]) * 60 + parseInt(p[1]); }
+            return 0;
+        }
+
+        function memberFormatDaysToText(days) {
+            if (!days || days === 0) return '0일';
+            const fullDays = Math.floor(days);
+            const remainingHours = Math.round((days - fullDays) * 8);
+            if (fullDays === 0) {
+                return `${remainingHours}시간`;
+            } else if (remainingHours === 0) {
+                return `${fullDays}일`;
+            } else {
+                return `${fullDays}일 ${remainingHours}시간`;
+            }
+        }
+
+        function memberInitChart(data = null) {
+            const ctx = document.getElementById('memberWorkChart').getContext('2d');
+            if (memberMyChart) memberMyChart.destroy();
+            const d = data ? [data.stdHours, data.totalHours, data.overHours, data.vacationHours] : [0,0,0,0];
+            memberMyChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: ['기준근로', '총 근무', '초과 근무', '휴가 사용'], datasets: [{ label: '시간', data: d, backgroundColor: ['#94a3b8', '#8b5cf6', '#ef4444', '#10b981'], borderRadius: 6, barThickness: 50 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y.toFixed(1)} 시간` } } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function memberCalculateData(key) {
+            const [targetName, targetCompName] = key.split('|');
+            const userRows = memberRawData.filter(r => r['이름'] === targetName && (r['회사내 이름'] || '') === targetCompName);
+            if (!userRows.length) return null;
+            const dailyMap = new Map();
+            userRows.forEach(row => {
+                let dateStr = row['날짜'] || '알 수 없음';
+                if (typeof dateStr === 'string' && dateStr.includes('-')) { try { const d = new Date(dateStr); dateStr = `${d.getMonth()+1}/${d.getDate()}`; } catch(e) {} }
+                const total = memberParseToMinutes(row['총 근무']), vacation = memberParseToMinutes(row['휴가시간']);
+                let inTime = memberParseToMinutes(row['출근시각']), outTime = memberParseToMinutes(row['퇴근시각']);
+                const isWorkDay = !row['휴일정책'] || String(row['휴일정책']).trim() === '', isMissing = !row['근무정책'] && !row['휴가정책'] && !row['휴일구분'];
+                if (!dailyMap.has(dateStr)) dailyMap.set(dateStr, { date: dateStr, total: 0, vacation: 0, in: inTime > 0 ? inTime : Infinity, out: outTime > 0 ? outTime : -Infinity, isWorkDay: false, isMissing: true, policies: [] });
+                const day = dailyMap.get(dateStr);
+                day.total += total; day.vacation += vacation;
+                if (isWorkDay) { day.isWorkDay = true; day.isMissing = false; if (row['근무정책']) day.policies.push(row['근무정책']); }
+                if (row['휴가정책'] || row['휴일구분']) day.isMissing = false;
+                if (inTime > 0 && inTime < day.in) day.in = inTime;
+                if (outTime > 0 && outTime > day.out) day.out = outTime;
+            });
+            let workDays = 0, totalMins = 0, vacationMins = 0, clockInSum = 0, clockOutSum = 0, clockInCount = 0, clockOutCount = 0, dayByDay = [];
+            dailyMap.forEach(day => {
+                const finalIn = day.in === Infinity ? 0 : day.in, finalOut = day.out === -Infinity ? 0 : day.out;
+                if (day.isWorkDay) workDays++;
+                totalMins += day.total + day.vacation; vacationMins += day.vacation;
+                if (finalIn > 0) { clockInSum += finalIn; clockInCount++; }
+                if (finalOut > 0) { clockOutSum += finalOut; clockOutCount++; }
+                dayByDay.push({ date: day.date, total: day.total, vacation: day.vacation, over: Math.max(0, day.total - 480), in: finalIn, out: finalOut, isWorkDay: day.isWorkDay, isMissing: day.isMissing, policy: [...new Set(day.policies)].join(', ') });
+            });
+            const stdMins = workDays * 480, overMins = Math.max(0, totalMins - stdMins);
+            const avgIn = clockInCount > 0 ? clockInSum / clockInCount : 0, avgOut = clockOutCount > 0 ? clockOutSum / clockOutCount : 0;
+            const vacationInfo = getVacationInfo(targetName, currentMemberMonth);
+            memberCurrentCalculatedData = {
+                name: targetCompName ? `${targetName} (${targetCompName})` : targetName, realName: targetName, dayByDay, workDays,
+                stdHoursRaw: stdMins / 60, totalHoursRaw: totalMins / 60, overHoursRaw: overMins / 60, vacationHoursRaw: vacationMins / 60,
+                vacationUsed: vacationInfo.used, vacationRemain: vacationInfo.remain,
+                display: { workDays: `${workDays}일`, stdHours: memberFormatMinutes(stdMins), totalHours: memberFormatMinutes(totalMins), overTime: memberFormatMinutes(overMins), vacation: memberFormatDaysToText(vacationInfo.used), remainVacation: memberFormatDaysToText(vacationInfo.remain), avgIn: avgIn > 0 ? memberFormatMinutes(avgIn, 'colon') : '-', avgOut: avgOut > 0 ? memberFormatMinutes(avgOut, 'colon') : '-', missing: `${dayByDay.filter(d => d.isMissing).length}건` }
+            };
+            return memberCurrentCalculatedData;
+        }
+
+        function memberShowDetail(type) {
+            if (!memberCurrentCalculatedData) return;
+            const overlay = document.getElementById('memberModalOverlay'), title = document.getElementById('memberModalTitle'), list = document.getElementById('memberModalList'), ctx = document.getElementById('memberModalChart').getContext('2d');
+            overlay.style.display = 'flex'; list.innerHTML = '';
+            if (memberModalChart) memberModalChart.destroy();
+            const labels = memberCurrentCalculatedData.dayByDay.map(d => d.date);
+            let cfg = { type: 'bar', data: { labels, datasets: [] }, options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: c => { const v = c.parsed.y; if (v === null) return null; if (type === 'avgIn' || type === 'avgOut') return ` 시각: ${memberFormatMinutes(v, 'colon')}`; if (type === 'missing' || type === 'workDays') return v === 1 ? ' 해당함' : ' 해당없음'; return ` 시간: ${memberFormatMinutes(v)}`; } } } } } };
+            switch(type) {
+                case 'workDays': title.innerText = '📅 통합 근무 일자 상세'; memberCurrentCalculatedData.dayByDay.filter(d => d.isWorkDay).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${d.policy}</span></div>`; }); cfg.data.datasets.push({ label: '근무 여부', data: memberCurrentCalculatedData.dayByDay.map(d => d.isWorkDay ? 1 : 0), backgroundColor: '#3b82f6' }); cfg.options.scales = { y: { display: false } }; break;
+                case 'totalHours': title.innerText = '💼 일자별 근무 시간'; cfg.data.datasets.push({ label: '분', data: memberCurrentCalculatedData.dayByDay.map(d => d.total), backgroundColor: '#8b5cf6' }); memberCurrentCalculatedData.dayByDay.forEach(d => { if (d.total > 0) list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.total)}</span></div>`; }); break;
+                case 'overTime': title.innerText = '🔥 일자별 초과 근무'; cfg.data.datasets.push({ label: '분', data: memberCurrentCalculatedData.dayByDay.map(d => d.over), backgroundColor: '#ef4444' }); memberCurrentCalculatedData.dayByDay.forEach(d => { if (d.over > 0) list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.over)}</span></div>`; }); break;
+                case 'vacation': title.innerText = '🏖️ 휴가 사용 상세'; memberCurrentCalculatedData.dayByDay.filter(d => d.vacation > 0).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.vacation)}</span></div>`; }); cfg.data.datasets.push({ label: '분', data: memberCurrentCalculatedData.dayByDay.map(d => d.vacation), backgroundColor: '#10b981' }); break;
+                case 'missing': title.innerText = '⚠️ 기록 누락 일자'; cfg.data.datasets.push({ label: '누락', data: memberCurrentCalculatedData.dayByDay.map(d => d.isMissing ? 1 : 0), backgroundColor: '#ef4444' }); cfg.options.scales = { y: { display: false } }; memberCurrentCalculatedData.dayByDay.filter(d => d.isMissing).forEach(d => { list.innerHTML += `<div class="modal-list-item" style="color:#ef4444"><span>${d.date}</span><span>기록 없음</span></div>`; }); break;
+                case 'avgIn': title.innerText = '🌅 일자별 출근 시각'; cfg.type = 'line'; cfg.data.datasets.push({ label: '출근', data: memberCurrentCalculatedData.dayByDay.map(d => d.in > 0 ? d.in : null), borderColor: '#3b82f6', pointBackgroundColor: '#3b82f6', tension: 0.3, spanGaps: true }); cfg.options.scales = { y: { ticks: { callback: v => memberFormatMinutes(v, 'colon') } } }; memberCurrentCalculatedData.dayByDay.filter(d => d.in > 0).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.in, 'colon')}</span></div>`; }); break;
+                case 'avgOut': title.innerText = '🌆 일자별 퇴근 시각'; cfg.type = 'line'; cfg.data.datasets.push({ label: '퇴근', data: memberCurrentCalculatedData.dayByDay.map(d => d.out > 0 ? d.out : null), borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', tension: 0.3, spanGaps: true }); cfg.options.scales = { y: { ticks: { callback: v => memberFormatMinutes(v, 'colon') } } }; memberCurrentCalculatedData.dayByDay.filter(d => d.out > 0).forEach(d => { list.innerHTML += `<div class="modal-list-item"><span>${d.date}</span><span>${memberFormatMinutes(d.out, 'colon')}</span></div>`; }); break;
+            }
+            memberModalChart = new Chart(ctx, cfg);
+        }
+
+        function memberUpdateUI(result) {
+            if (!result) return;
+            document.getElementById('memberReportTitle').innerText = `📊 [${result.name}]님 근태 정산 리포트 (${currentMemberMonth})`;
+            document.getElementById('member_val_workDays').innerText = result.display.workDays;
+            document.getElementById('member_val_stdHours').innerText = result.display.stdHours;
+            document.getElementById('member_val_totalHours').innerText = result.display.totalHours;
+            document.getElementById('member_val_overTime').innerText = result.display.overTime;
+            document.getElementById('member_val_vacation').innerText = result.display.vacation;
+            document.getElementById('member_val_remainVacation').innerText = result.display.remainVacation;
+            document.getElementById('member_val_missing').innerText = result.display.missing;
+            document.getElementById('member_val_avgIn').innerText = result.display.avgIn;
+            document.getElementById('member_val_avgOut').innerText = result.display.avgOut;
+            memberInitChart({ stdHours: result.stdHoursRaw, totalHours: result.totalHoursRaw, overHours: result.overHoursRaw, vacationHours: result.vacationUsed * 8 });
+        }
+
+        document.getElementById('memberUserSelect').addEventListener('change', e => { if (e.target.value) { selectedUserKey = e.target.value; memberUpdateUI(memberCalculateData(e.target.value)); } });
+        document.getElementById('memberModalClose').onclick = () => document.getElementById('memberModalOverlay').style.display = 'none';
+        window.onclick = e => { if (e.target == document.getElementById('memberModalOverlay')) document.getElementById('memberModalOverlay').style.display = 'none'; };
+        memberInitChart();
+
+        // ===== CEO 뷰 =====
+        let ceoRawData = [], ceoDeptChart = null, ceoTeamChart = null, ceoTrendChart = null;
+
+        async function ceoSwitchMonth(m) {
+            currentCeoMonth = m;
+            document.querySelectorAll('#ceoMonthTabs .month-tab').forEach(t => { t.classList.remove('active'); t.classList.add('loading'); });
+            document.querySelector(`#ceoMonthTabs .month-tab[data-month="${m}"]`).classList.add('active');
+            await ceoLoadMonth(m);
+            document.querySelectorAll('#ceoMonthTabs .month-tab').forEach(t => t.classList.remove('loading'));
+        }
+
+        async function ceoLoadMonth(m) { ceoRawData = await loadSheetData(m); if (ceoRawData.length) ceoProcessExcel(ceoRawData); }
+
+        function ceoParseToMinutes(val) {
+            if (!val) return 0;
+            if (typeof val === 'number') return Math.round(val * 24 * 60);
             if (typeof val === 'string') { const p = val.trim().split(':'); if (p.length >= 2) return parseInt(p[0]) * 60 + parseInt(p[1]); }
             return 0;
         }
@@ -611,11 +590,6 @@
             const deptLabels = Object.keys(departments), deptValues = Object.values(departments).map(v => ceoFormatHours(v));
             const teamLabels = Object.keys(teams), teamValues = Object.values(teams).map(v => ceoFormatHours(v));
             ceoInitCharts({ labels: deptLabels, values: deptValues }, { labels: teamLabels, values: teamValues }, { labels: weekdayLabels, values: weekdayValues });
-        }
-
-        function ceoParseToMinutes(val) {
-            if (typeof val === 'string') { const p = val.trim().split(':'); if (p.length >= 2) return parseInt(p[0]) * 60 + parseInt(p[1]); }
-            return 0;
         }
 
         ceoInitCharts({labels:[],values:[]},{labels:[],values:[]},{labels:[],values:[]});
