@@ -420,11 +420,13 @@
                 if (typeof dateStr === 'string' && dateStr.includes('-')) { try { const d = new Date(dateStr); dateStr = `${d.getMonth()+1}/${d.getDate()}`; } catch(e) {} }
                 const total = memberParseToMinutes(row['총 근무']), vacation = memberParseToMinutes(row['휴가시간']);
                 let inTime = memberParseToMinutes(row['출근시각']), outTime = memberParseToMinutes(row['퇴근시각']);
-                const isWorkDay = !!row['근무정책'], isMissing = !row['근무정책'] && !row['휴가정책'] && !row['휴일구분'];
-                if (!dailyMap.has(dateStr)) dailyMap.set(dateStr, { date: dateStr, total: 0, vacation: 0, in: inTime > 0 ? inTime : Infinity, out: outTime > 0 ? outTime : -Infinity, isWorkDay: false, isMissing: true, policies: [] });
+                const hasHolidayType = row['휴일구분'] && String(row['휴일구분']).trim() !== '';
+                const isMissing = !row['근무정책'] && !row['휴가정책'] && !row['휴일구분'];
+                if (!dailyMap.has(dateStr)) dailyMap.set(dateStr, { date: dateStr, total: 0, vacation: 0, in: inTime > 0 ? inTime : Infinity, out: outTime > 0 ? outTime : -Infinity, hasHolidayType: false, isMissing: true, policies: [] });
                 const day = dailyMap.get(dateStr);
                 day.total += total; day.vacation += vacation;
-                if (isWorkDay) { day.isWorkDay = true; day.isMissing = false; if (row['근무정책']) day.policies.push(row['근무정책']); }
+                if (hasHolidayType) { day.hasHolidayType = true; }
+                if (row['근무정책']) { day.isMissing = false; day.policies.push(row['근무정책']); }
                 if (row['휴가정책'] || row['휴일구분']) day.isMissing = false;
                 if (inTime > 0 && inTime < day.in) day.in = inTime;
                 if (outTime > 0 && outTime > day.out) day.out = outTime;
@@ -432,11 +434,12 @@
             let workDays = 0, totalMins = 0, vacationMins = 0, clockInSum = 0, clockOutSum = 0, clockInCount = 0, clockOutCount = 0, dayByDay = [];
             dailyMap.forEach(day => {
                 const finalIn = day.in === Infinity ? 0 : day.in, finalOut = day.out === -Infinity ? 0 : day.out;
-                if (day.isWorkDay) workDays++;
-                totalMins += day.total; vacationMins += day.vacation;
+                const isWorkDay = !day.hasHolidayType;
+                if (isWorkDay) workDays++;
+                totalMins += day.total + day.vacation; vacationMins += day.vacation;
                 if (finalIn > 0) { clockInSum += finalIn; clockInCount++; }
                 if (finalOut > 0) { clockOutSum += finalOut; clockOutCount++; }
-                dayByDay.push({ date: day.date, total: day.total, vacation: day.vacation, over: Math.max(0, day.total - 480), in: finalIn, out: finalOut, isWorkDay: day.isWorkDay, isMissing: day.isMissing, policy: [...new Set(day.policies)].join(', ') });
+                dayByDay.push({ date: day.date, total: day.total, vacation: day.vacation, over: Math.max(0, day.total - 480), in: finalIn, out: finalOut, isWorkDay: isWorkDay, isMissing: day.isMissing, policy: [...new Set(day.policies)].join(', ') });
             });
             const stdMins = workDays * 480, overMins = Math.max(0, totalMins - stdMins);
             const avgIn = clockInCount > 0 ? clockInSum / clockInCount : 0, avgOut = clockOutCount > 0 ? clockOutSum / clockOutCount : 0;
