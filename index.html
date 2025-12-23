@@ -420,7 +420,7 @@
                 if (typeof dateStr === 'string' && dateStr.includes('-')) { try { const d = new Date(dateStr); dateStr = `${d.getMonth()+1}/${d.getDate()}`; } catch(e) {} }
                 const total = memberParseToMinutes(row['총 근무']), vacation = memberParseToMinutes(row['휴가시간']);
                 let inTime = memberParseToMinutes(row['출근시각']), outTime = memberParseToMinutes(row['퇴근시각']);
-                const isWorkDay = !row['휴일정책'] || String(row['휴일정책']).trim() === '', isMissing = !row['근무정책'] && !row['휴가정책'] && !row['휴일구분'];
+                const isWorkDay = !!row['근무정책'], isMissing = !row['근무정책'] && !row['휴가정책'] && !row['휴일구분'];
                 if (!dailyMap.has(dateStr)) dailyMap.set(dateStr, { date: dateStr, total: 0, vacation: 0, in: inTime > 0 ? inTime : Infinity, out: outTime > 0 ? outTime : -Infinity, isWorkDay: false, isMissing: true, policies: [] });
                 const day = dailyMap.get(dateStr);
                 day.total += total; day.vacation += vacation;
@@ -433,7 +433,7 @@
             dailyMap.forEach(day => {
                 const finalIn = day.in === Infinity ? 0 : day.in, finalOut = day.out === -Infinity ? 0 : day.out;
                 if (day.isWorkDay) workDays++;
-                totalMins += day.total + day.vacation; vacationMins += day.vacation;
+                totalMins += day.total; vacationMins += day.vacation;
                 if (finalIn > 0) { clockInSum += finalIn; clockInCount++; }
                 if (finalOut > 0) { clockOutSum += finalOut; clockOutCount++; }
                 dayByDay.push({ date: day.date, total: day.total, vacation: day.vacation, over: Math.max(0, day.total - 480), in: finalIn, out: finalOut, isWorkDay: day.isWorkDay, isMissing: day.isMissing, policy: [...new Set(day.policies)].join(', ') });
