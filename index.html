@@ -17,7 +17,7 @@
         .month-tab:hover { background: #e2e8f0; transform: translateY(-2px); }
         .month-tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: #667eea; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
         .month-tab.loading { opacity: 0.6; cursor: wait; }
-        
+
         /* 개인/조직 탭 */
         .view-tabs { display: flex; gap: 8px; margin-bottom: 20px; padding: 16px 20px; background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
         .view-tab { padding: 10px 20px; border-radius: 8px; background: #f8fafc; color: #64748b; border: 2px solid transparent; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 14px; }
@@ -25,7 +25,7 @@
         .view-tab.active { background: white; color: #667eea; border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15); }
         .member-view-content { display: none; }
         .member-view-content.active { display: block; }
-        
+
         .stat-card { transition: all 0.3s ease; position: relative; }
         .stat-card:hover { transform: translateY(-5px); }
         .stat-card.clickable { cursor: pointer; }
@@ -36,14 +36,14 @@
         .info-card { background: #f8fafc; border-radius: 12px; padding: 20px; transition: transform 0.2s; cursor: pointer; position: relative; }
         .info-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: #f1f5f9; }
         .info-card::after { content: '🔍'; position: absolute; top: 10px; right: 10px; font-size: 12px; opacity: 0.3; }
-        
+
         /* 상태 원 스타일 */
-        .status-dot { 
-            display: inline-block; 
-            width: 18px; 
-            height: 18px; 
-            border-radius: 50%; 
-            margin-right: 8px; 
+        .status-dot {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 8px;
             position: relative;
             cursor: help;
             transition: transform 0.2s;
@@ -53,7 +53,7 @@
         }
         .status-dot.green { background-color: #10b981; }
         .status-dot.red { background-color: #ef4444; }
-        
+
         /* 툴팁 스타일 */
         .status-dot[data-tooltip] {
             position: relative;
@@ -94,7 +94,7 @@
         .status-dot[data-tooltip]:hover::before {
             opacity: 1;
         }
-        
+
         /* 분석 탭 스타일 */
         .analysis-tab {
             padding: 8px 16px;
@@ -120,20 +120,20 @@
         .analysis-tab-content.active {
             display: block;
         }
-        
+
         /* Footer 스타일 */
-        .page-footer { 
-            margin-top: 60px; 
-            padding: 30px 20px; 
-            background: #f8fafc; 
+        .page-footer {
+            margin-top: 60px;
+            padding: 30px 20px;
+            background: #f8fafc;
             border-top: 1px solid #e2e8f0;
             text-align: left;
         }
-        .footer-content { 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            color: #64748b; 
-            font-size: 13px; 
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            color: #64748b;
+            font-size: 13px;
             line-height: 1.8;
         }
         .no-issue-btn {
@@ -206,7 +206,7 @@
         .mail-link:hover {
             color: #2563eb;
         }
-        
+
         /* 관리자 페이지 스타일 */
         .admin-view {
             display: none;
@@ -307,7 +307,7 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
         }
-        
+
         .label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
         .value { font-size: 24px; font-weight: 800; color: #1e293b; }
         .sub-value { font-size: 13px; color: #94a3b8; margin-top: 4px; }
@@ -334,7 +334,7 @@
         .remain-vacation-card .label { color: rgba(255, 255, 255, 0.9); font-size: 14px; margin-bottom: 8px; }
         .remain-vacation-card .value { color: white; font-size: 36px; font-weight: 900; }
         .remain-vacation-card .sub-value { color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-top: 8px; }
-        
+
         /* 암호 입력 모달 */
         .password-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .password-modal.active { display: flex; }
@@ -357,13 +357,12 @@
     </style>
 </head>
 <body>
-    <!-- 로딩 오버레이 -->
+
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-spinner"></div>
         <div class="loading-text">Google Sheets에서 데이터를 불러오는 중...</div>
     </div>
 
-    <!-- 암호 입력 모달 -->
     <div class="password-modal active" id="passwordModal">
         <div class="password-box">
             <div class="lock-icon">🔒</div>
@@ -377,7 +376,6 @@
         </div>
     </div>
 
-    <!-- 구성원 뷰 -->
     <div id="memberView" class="view">
         <button class="nav-button" onclick="showView('ceo')">CEO용으로 이동 →</button>
         <div class="modal-overlay" id="memberModalOverlay">
@@ -411,9 +409,9 @@
                     <div class="month-tab" data-month="10월" onclick="memberSwitchMonth('10월')">📅 10월</div>
                     <div class="month-tab" data-month="11월" onclick="memberSwitchMonth('11월')">📅 11월</div>
                 </div>
-                
+
                 <div class="p-8">
-                    <!-- 개인 정보 뷰 -->
+
                     <div id="personalView" class="member-view-content active">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2">
@@ -458,8 +456,7 @@
                                     <div class="value" id="member_val_avgOut">-</div>
                                 </div>
                             </div>
-                            
-                            <!-- 조직 평균 출퇴근 -->
+
                             <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-6 border border-indigo-200">
                                 <h3 class="text-lg font-bold text-indigo-800 mb-4 text-center">📊 조직 전체 평균 출퇴근</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -475,8 +472,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- 소속 부서 평균 출퇴근 -->
+
                             <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 mb-6 border border-blue-200">
                                 <h3 class="text-lg font-bold text-blue-800 mb-4 text-center" id="dept_avg_title">👥 소속 부서 평균 출퇴근</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -494,23 +490,21 @@
                             </div>
                         </div>
                         <div class="lg:col-span-1">
-                            <!-- 잔여 연차 카드 -->
+
                             <div class="remain-vacation-card">
                                 <div class="label">💎 잔여 연차</div>
                                 <div class="value" id="member_val_remainVacation">-</div>
                                 <div class="sub-value">현재 사용 가능한 연차</div>
                             </div>
-                            
-                            <!-- 하루 평균 근무시간 카드 -->
+
                             <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 mb-6 border border-orange-200 shadow-md">
                                 <div class="text-sm text-orange-600 font-semibold mb-2">⏱️ 하루 평균 근무시간</div>
                                 <div class="text-4xl font-bold text-orange-700" id="member_val_avgHoursPerDay">-</div>
                                 <div class="text-xs text-orange-500 mt-1">OH / Day</div>
                             </div>
-                            
-                            <!-- 요일별 초과근무 횟수 -->
+
                             <div class="bg-white rounded-xl p-6 shadow-md border border-gray-200">
-                                <!-- 탭 헤더 -->
+
                                 <div class="flex gap-2 mb-4 border-b border-gray-200">
                                     <button class="analysis-tab active" data-tab="overtime" onclick="switchAnalysisTab('overtime')">
                                         📊 초과근무
@@ -519,14 +513,12 @@
                                         📈 출퇴근 패턴
                                     </button>
                                 </div>
-                                
-                                <!-- 탭 1: 초과근무 분석 -->
+
                                 <div id="tab-overtime" class="analysis-tab-content active">
                                     <h3 class="text-md font-bold text-gray-700 mb-3">요일별 초과근무 횟수</h3>
                                     <div class="text-xs text-gray-500 mb-3">8시간 이상 근무 (월~금)</div>
                                     <div style="height: 200px;"><canvas id="weekdayOvertimeChart"></canvas></div>
-                                    
-                                    <!-- 인사이트 -->
+
                                     <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
                                         <div class="text-xs font-semibold text-blue-800 mb-2">💡 인사이트</div>
                                         <div class="text-xs text-blue-700 space-y-1" id="overtime-insights">
@@ -534,16 +526,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- 탭 2: 출퇴근 패턴 -->
+
                                 <div id="tab-commute" class="analysis-tab-content" style="display: none;">
                                     <h3 class="text-md font-bold text-gray-700 mb-3">요일별 평균 출퇴근 시간</h3>
                                     <div class="text-xs text-gray-500 mb-3">월~금 평균 시간</div>
                                     <div style="height: 200px; position: relative;">
                                         <canvas id="weekdayCommuteChart" style="width: 100% !important; height: 100% !important;"></canvas>
                                     </div>
-                                    
-                                    <!-- 인사이트 -->
+
                                     <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-100">
                                         <div class="text-xs font-semibold text-green-800 mb-2">💡 인사이트</div>
                                         <div class="text-xs text-green-700 space-y-1" id="commute-insights">
@@ -555,10 +545,9 @@
                         </div>
                     </div>
                     </div>
-                    <!-- 개인 뷰 끝 -->
+
                 </div>
-                
-                <!-- Footer -->
+
                 <div class="page-footer">
                     <div class="footer-content">
                         <p style="margin-bottom: 15px;">
@@ -579,10 +568,8 @@
         </div>
     </div>
 
-    <!-- CEO 뷰 -->
     <div id="ceoView" class="view">
-        
-        <!-- CEO 휴가 상세 모달 -->
+
         <div class="modal-overlay" id="ceoVacationModalOverlay">
             <div class="modal-content">
                 <span class="modal-close" id="ceoVacationModalClose">&times;</span>
@@ -590,8 +577,7 @@
                 <div class="modal-list-wrapper" id="ceoVacationModalList"></div>
             </div>
         </div>
-        
-        <!-- CEO 근무 기록 누락 모달 -->
+
         <div class="modal-overlay" id="ceoMissingModalOverlay">
             <div class="modal-content">
                 <span class="modal-close" id="ceoMissingModalClose">&times;</span>
@@ -599,8 +585,7 @@
                 <div class="modal-list-wrapper" id="ceoMissingModalList"></div>
             </div>
         </div>
-        
-        <!-- CEO 조직별 구성원 상세 모달 -->
+
         <div class="modal-overlay" id="ceoTeamDetailModalOverlay">
             <div class="modal-content">
                 <span class="modal-close" id="ceoTeamDetailModalClose">&times;</span>
@@ -608,7 +593,7 @@
                 <div class="modal-list-wrapper" id="ceoTeamDetailModalList"></div>
             </div>
         </div>
-        
+
         <div class="p-6 md:p-10">
             <div class="mx-auto" style="max-width: 2000px;">
                 <header class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-6">
@@ -677,29 +662,10 @@
                         <div class="h-[300px]"><canvas id="ceoTrendChart"></canvas></div>
                     </div>
                 </div>
-                
-                <!-- Footer -->
-                <div class="page-footer">
-                    <div class="footer-content">
-                        <p style="margin-bottom: 15px;">
-                            * 근태 기록 리포트에 이상이 없을 경우, <button class="no-issue-btn" onclick="saveNoIssue('ceo')">이상 없음</button>을 눌러주세요.
-                        </p>
-                        <p>
-                            * 근태 기록 관련 문의 방법
-                            <span class="help-icon">?
-                                <span class="help-tooltip">
-                                    경영지원팀 Leo에게 메일로 문의해주세요.<br>
-                                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=leo@company.com" target="_blank" class="mail-link">여기</a>를 누르시면 구글 메일로 연결됩니다.
-                                </span>
-                            </span>
-                        </p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- 관리자 뷰 -->
     <div id="adminView" class="admin-view">
         <div class="p-6 md:p-10">
             <div class="mx-auto" style="max-width: 2000px;">
@@ -716,7 +682,6 @@
                     </div>
                 </div>
 
-                <!-- 통계 카드 -->
                 <div class="admin-stats">
                     <div class="admin-stat-card">
                         <div class="admin-stat-label">총 확인 건수</div>
@@ -735,13 +700,12 @@
                     </div>
                 </div>
 
-                <!-- 테이블 -->
                 <div class="bg-white rounded-xl p-6 shadow-md">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-xl font-bold text-gray-800">📋 이상 없음 확인 기록</h2>
                         <button class="clear-all-btn" onclick="adminClearAll()">전체 기록 삭제</button>
                     </div>
-                    
+
                     <div class="admin-table">
                         <table>
                             <thead>
@@ -778,103 +742,91 @@
             '연차': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxBvVil1szQqCeFl2qOVYnSSK16ZtlRlUji8sTtdgzAKLa4M73ngCHPHh2oewE-GAP5VQLsLV8f_wT/pub?gid=1588070847&single=true&output=csv'
         };
 
-
         const ADMIN_PASSWORD = "admin2025";
-        
+
         const MEMBER_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTxBvVil1szQqCeFl2qOVYnSSK16ZtlRlUji8sTtdgzAKLa4M73ngCHPHh2oewE-GAP5VQLsLV8f_wT/pub?gid=1780552814&single=true&output=csv";
-        
+
         let memberInfoData = null;
-        
+
         async function loadMemberInfo() {
             if (memberInfoData) return memberInfoData;
-            
+
             try {
                 const response = await fetch(MEMBER_SHEET_URL);
                 const text = await response.text();
                 const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
                 memberInfoData = parsed.data;
-                console.log('📋 구성원 정보 로드:', memberInfoData.length, '명');
                 return memberInfoData;
             } catch (error) {
-                console.error('❌ 구성원 정보 로드 실패:', error);
                 return [];
             }
         }
 
-
         const USER_PASSWORDS = {
 
-
-
-
         };
-        
+
         function formatBirthdate(birthdate) {
             if (!birthdate) return null;
-            
+
             const cleaned = String(birthdate).replace(/[^0-9]/g, '');
-            
+
             if (cleaned.length === 8) {
                 return cleaned.slice(2);
             }
             else if (cleaned.length === 6) {
                 return cleaned;
             }
-            
+
             return null;
         }
 
         async function getDefaultPassword(userKey) {
             const [name, compName] = userKey.split('|');
-            
+
             if (!memberInfoData) {
                 await loadMemberInfo();
             }
-            
+
             if (memberInfoData) {
-                const member = memberInfoData.find(m => 
+                const member = memberInfoData.find(m =>
                     m['이름'] === name && (m['회사내 이름'] || '') === compName
                 );
-                
+
                 if (member && member['생년월일']) {
                     const password = formatBirthdate(member['생년월일']);
                     if (password) {
-                        console.log(`🔑 ${name} (${compName}): 생년월일 비밀번호 - ${password}`);
                         return password;
                     }
                 }
             }
-            
-            console.warn(`⚠️ ${name} (${compName}): 생년월일 없음, 회사내 이름 사용`);
+
             return compName || name;
         }
-        
+
         async function getUserPassword(userKey) {
 
             return USER_PASSWORDS[userKey] || await getDefaultPassword(userKey);
         }
-        
 
         const authSession = {
             admin: false,
             users: new Set()
         };
-        
 
         let pendingUserKey = null;
         let pendingCallback = null;
-        
 
         function openPasswordModal(userKey, callback, isCeoView = false) {
             pendingUserKey = userKey;
             pendingCallback = callback;
-            
+
             const modal = document.getElementById('passwordModal');
             const title = document.getElementById('passwordTitle');
             const subtitle = document.getElementById('passwordSubtitle');
             const input = document.getElementById('passwordInput');
             const error = document.getElementById('passwordError');
-            
+
             if (isCeoView) {
                 title.innerText = '관리자 인증';
                 subtitle.innerText = 'CEO 페이지에 접근하려면 관리자 암호를 입력하세요';
@@ -883,7 +835,6 @@
                 const displayName = compName ? `${name} (${compName})` : name;
                 title.innerText = '구성원 인증';
                 subtitle.innerText = `${displayName}의 페이지에 접근하려면 암호를 입력하세요`;
-                
 
                 if (!USER_PASSWORDS[userKey]) {
                     const hint = document.createElement('div');
@@ -892,19 +843,17 @@
                     subtitle.parentNode.insertBefore(hint, subtitle.nextSibling);
                 }
             }
-            
+
             input.value = '';
             input.classList.remove('error');
             error.classList.remove('active');
             modal.classList.add('active');
             input.focus();
-            
 
             input.onkeypress = (e) => {
                 if (e.key === 'Enter') verifyPassword();
             };
         }
-        
 
         function closePasswordModal() {
             const modal = document.getElementById('passwordModal');
@@ -912,28 +861,25 @@
             pendingUserKey = null;
             pendingCallback = null;
         }
-        
-        
 
         async function verifyPassword() {
             const input = document.getElementById('passwordInput');
             const error = document.getElementById('passwordError');
             const enteredPassword = input.value.trim();
-            
+
             if (!enteredPassword) {
                 input.classList.add('error');
                 error.innerText = '⚠️ 암호를 입력하세요';
                 error.classList.add('active');
                 return;
             }
-            
+
             let isValid = false;
-            
 
             if (enteredPassword === ADMIN_PASSWORD) {
                 authSession.admin = true;
                 isValid = true;
-            } 
+            }
 
             else if (pendingUserKey) {
                 const correctPassword = await getUserPassword(pendingUserKey);
@@ -942,7 +888,7 @@
                     isValid = true;
                 }
             }
-            
+
             if (isValid) {
                 closePasswordModal();
                 if (pendingCallback) {
@@ -953,53 +899,47 @@
                 input.value = '';
                 error.innerText = '❌ 암호가 올바르지 않습니다';
                 error.classList.add('active');
-                
+
                 setTimeout(() => {
                     input.classList.remove('error');
                 }, 500);
             }
         }
-        
 
         function hasAccess(userKey) {
             return authSession.admin || authSession.users.has(userKey);
         }
-        
+
         function hasAdminAccess() {
             return authSession.admin;
         }
-        
 
         async function verifyInitialPassword() {
             const input = document.getElementById('passwordInput');
             const error = document.getElementById('passwordError');
             const enteredPassword = input.value.trim();
-            
+
             if (!enteredPassword) {
                 input.classList.add('error');
                 error.innerText = '⚠️ 암호를 입력하세요';
                 error.classList.add('active');
                 return;
             }
-            
 
             document.getElementById('loadingOverlay').style.display = 'flex';
-            
 
             if (enteredPassword === ADMIN_PASSWORD) {
                 authSession.admin = true;
                 closePasswordModal();
-                
 
                 await initializeData();
                 document.getElementById('loadingOverlay').style.display = 'none';
                 showView('ceo');
                 return;
             }
-            
 
             await initializeData();
-            
+
             if (!memberInfoData) {
                 await loadMemberInfo();
             }
@@ -1007,11 +947,10 @@
             const months = ['9월', '10월', '11월'];
             let foundUser = null;
             let userFirstMonth = null;
-            
+
             for (const month of months) {
                 const memberData = await loadSheetData(month);
                 const userMap = new Map();
-                
 
                 memberData.forEach(r => {
                     const name = r['이름'];
@@ -1023,7 +962,6 @@
                         }
                     }
                 });
-                
 
                 for (const [key, userData] of userMap) {
                     const correctPassword = await getUserPassword(key);
@@ -1036,36 +974,29 @@
                         break;
                     }
                 }
-                
 
                 if (foundUser) break;
             }
-            
+
             document.getElementById('loadingOverlay').style.display = 'none';
-            
+
             if (foundUser) {
 
                 authSession.users.add(foundUser.key);
                 closePasswordModal();
-                
 
                 document.getElementById('memberView').classList.add('active');
-                
 
                 currentMemberMonth = userFirstMonth;
-                
 
                 document.querySelectorAll('#memberMonthTabs .month-tab').forEach(t => t.classList.remove('active'));
                 document.querySelector(`#memberMonthTabs .month-tab[data-month="${userFirstMonth}"]`)?.classList.add('active');
-                
 
                 await memberLoadMonth(userFirstMonth, true);
-                
 
                 const selectElement = document.getElementById('memberUserSelect');
                 selectElement.value = foundUser.key;
                 selectedUserKey = foundUser.key;
-                
 
                 const calculatedData = memberCalculateData(foundUser.key);
                 memberUpdateUI(calculatedData);
@@ -1075,13 +1006,12 @@
                 input.value = '';
                 error.innerText = '❌ 암호가 올바르지 않습니다';
                 error.classList.add('active');
-                
+
                 setTimeout(() => {
                     input.classList.remove('error');
                 }, 500);
             }
         }
-
 
         const DATA_CACHE = {};
         let VACATION_DATA = [];
@@ -1104,7 +1034,7 @@
                         complete: (results) => { DATA_CACHE[key] = results.data; resolve(results.data); }
                     });
                 });
-            } catch (error) { console.error(`${key} 데이터 로드 실패:`, error); return []; }
+            } catch (error) { return []; }
         }
 
         function getVacationInfo(name, month) {
@@ -1133,7 +1063,7 @@
                 VACATION_DATA = await loadSheetData('연차');
                 await loadSheetData('9월');
                 memberLoadMonth('9월', true);
-            } catch (error) { console.error('초기 데이터 로드 실패:', error); }
+            } catch (error) { }
             document.getElementById('loadingOverlay').style.display = 'none';
         }
 
@@ -1172,36 +1102,29 @@
                 memberLoadMonth(currentMemberMonth, true);
             }
         }
-        
 
         async function switchToMemberView(name, dept, month) {
 
             showView('member');
-            
 
             currentMemberMonth = month;
             document.querySelectorAll('#memberMonthTabs .month-tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`#memberMonthTabs .month-tab[data-month="${month}"]`)?.classList.add('active');
-            
 
             await memberLoadMonth(month, true);
-            
 
             const userKey = `${name}|${dept}`;
             const selectElement = document.getElementById('memberUserSelect');
-            
 
             const option = Array.from(selectElement.options).find(opt => opt.value === userKey);
-            
+
             if (option) {
                 selectElement.value = userKey;
                 selectedUserKey = userKey;
-                
 
                 const event = new Event('change');
                 selectElement.dispatchEvent(event);
             } else {
-                console.warn(`구성원을 찾을 수 없습니다: ${userKey}`);
             }
         }
 
@@ -1210,7 +1133,7 @@
             const title = document.getElementById('ceoVacationModalTitle');
             const list = document.getElementById('ceoVacationModalList');
             title.innerText = `🏖️ ${currentCeoMonth} 휴가 사용 상세`;
-            list.innerHTML = ceoVacationDetails.length === 0 
+            list.innerHTML = ceoVacationDetails.length === 0
                 ? '<div class="text-center text-gray-400 py-4">휴가 사용 내역이 없습니다.</div>'
                 : ceoVacationDetails.map((item, idx) => `<div class="modal-list-item"><span class="flex items-center gap-2"><span class="w-6 h-6 flex items-center justify-center bg-green-100 text-green-600 rounded-full text-xs font-bold">${idx + 1}</span><span class="font-medium">${item.name}</span></span><span class="text-green-600 font-bold">${item.used}일</span></div>`).join('');
             overlay.style.display = 'flex';
@@ -1221,23 +1144,23 @@
             const title = document.getElementById('ceoMissingModalTitle');
             const list = document.getElementById('ceoMissingModalList');
             title.innerText = `⚠️ ${currentCeoMonth} 근무 기록 누락 상세`;
-            list.innerHTML = ceoMissingDetails.length === 0 
+            list.innerHTML = ceoMissingDetails.length === 0
                 ? '<div class="text-center text-gray-400 py-4">근무 기록 누락 내역이 없습니다.</div>'
                 : ceoMissingDetails.map((item, idx) => `<div class="modal-list-item"><span class="flex items-center gap-2"><span class="w-6 h-6 flex items-center justify-center bg-amber-100 text-amber-600 rounded-full text-xs font-bold">${idx + 1}</span><span class="font-medium">${item.name}</span></span><span class="text-amber-600 font-bold">${item.count}회</span></div>`).join('');
             overlay.style.display = 'flex';
         }
-        
+
         let ceoTeamMembersData = {};
-        
+
         function showCeoTeamDetailModal(teamName) {
             const overlay = document.getElementById('ceoTeamDetailModalOverlay');
             const title = document.getElementById('ceoTeamDetailModalTitle');
             const list = document.getElementById('ceoTeamDetailModalList');
-            
+
             const members = ceoTeamMembersData[teamName] || [];
-            
+
             title.innerText = `📊 ${teamName} 구성원 초과근무 현황 (${currentCeoMonth})`;
-            
+
             if (members.length === 0) {
                 list.innerHTML = '<div class="text-center text-gray-400 py-4">해당 조직에 초과근무 데이터가 없습니다.</div>';
             } else {
@@ -1252,7 +1175,7 @@
                     </div>`;
                 }).join('');
             }
-            
+
             overlay.style.display = 'flex';
         }
 
@@ -1265,59 +1188,48 @@
             if (e.target === document.getElementById('ceoTeamDetailModalOverlay')) document.getElementById('ceoTeamDetailModalOverlay').style.display = 'none';
         });
 
-
-        let memberRawData = [], memberMyChart = null, memberModalChart = null, memberCurrentCalculatedData = null;
-
-
-        
+        let memberRawData = [], memberModalChart = null, memberCurrentCalculatedData = null;
 
         function calculateOrgStats(month) {
             if (!memberRawData || memberRawData.length === 0) {
                 return;
             }
-            
+
             let totalInSum = 0;
             let totalOutSum = 0;
             let inCount = 0;
             let outCount = 0;
-            
 
             memberRawData.forEach(row => {
                 const special = row['특이사항'] ? String(row['특이사항']).trim() : '';
-                
 
                 if (special.includes('입사일 이전')) return;
-                
+
                 const inTime = memberParseToMinutes(row['출근시각']);
                 const outTime = memberParseToMinutes(row['퇴근시각']);
-                
+
                 if (inTime > 0) {
                     totalInSum += inTime;
                     inCount++;
                 }
-                
+
                 if (outTime > 0) {
                     totalOutSum += outTime;
                     outCount++;
                 }
             });
-            
 
             const avgInMins = inCount > 0 ? totalInSum / inCount : 0;
             const avgOutMins = outCount > 0 ? totalOutSum / outCount : 0;
-            
-            console.log(`📊 ${month} 조직 평균: 출근=${inCount}건 → ${Math.floor(avgInMins/60)}:${String(Math.round(avgInMins%60)).padStart(2,'0')}, 퇴근=${outCount}건 → ${Math.floor(avgOutMins/60)}:${String(Math.round(avgOutMins%60)).padStart(2,'0')}`);
-            
 
             const inHour = Math.floor(avgInMins / 60);
             const inMin = Math.round(avgInMins % 60);
             document.getElementById('org_avg_in').innerText = `${String(inHour).padStart(2,'0')}:${String(inMin).padStart(2,'0')}`;
-            
+
             const outHour = Math.floor(avgOutMins / 60);
             const outMin = Math.round(avgOutMins % 60);
             document.getElementById('org_avg_out').innerText = `${String(outHour).padStart(2,'0')}:${String(outMin).padStart(2,'0')}`;
         }
-        
 
         function calculateDeptStats(userKey, month) {
             if (!memberRawData || memberRawData.length === 0 || !userKey) {
@@ -1326,11 +1238,9 @@
                 document.getElementById('dept_avg_out').innerText = '-';
                 return;
             }
-            
 
             const [userName, userCompName] = userKey.split('|');
             const userDept = userCompName || userName;
-            
 
             const deptToTeamMap = {};
             memberRawData.forEach(row => {
@@ -1339,8 +1249,6 @@
                 if (dept && org && !deptToTeamMap[dept]) {
                     const orgStr = String(org).trim();
                     let team = '기타';
-                    
-
 
                     if (dept === 'Guy') {
                         team = '경영지원팀';
@@ -1372,57 +1280,46 @@
                     else if (orgStr.includes('품질책임팀')) {
                         team = '품질책임팀';
                     }
-                    
+
                     deptToTeamMap[dept] = team;
                 }
             });
-            
 
             const userTeam = deptToTeamMap[userDept] || '기타';
-            
-            console.log(`👤 선택된 사용자: ${userDept}, 소속 팀: ${userTeam}`);
-            
-
             let totalInSum = 0;
             let totalOutSum = 0;
             let inCount = 0;
             let outCount = 0;
-            
+
             memberRawData.forEach(row => {
                 const dept = row['회사내 이름'];
                 const team = deptToTeamMap[dept];
-                
 
                 if (team !== userTeam) return;
-                
+
                 const special = row['특이사항'] ? String(row['특이사항']).trim() : '';
-                
 
                 if (special.includes('입사일 이전')) return;
-                
+
                 const inTime = memberParseToMinutes(row['출근시각']);
                 const outTime = memberParseToMinutes(row['퇴근시각']);
-                
+
                 if (inTime > 0) {
                     totalInSum += inTime;
                     inCount++;
                 }
-                
+
                 if (outTime > 0) {
                     totalOutSum += outTime;
                     outCount++;
                 }
             });
-            
 
             const avgInMins = inCount > 0 ? totalInSum / inCount : 0;
             const avgOutMins = outCount > 0 ? totalOutSum / outCount : 0;
-            
-            console.log(`👥 ${userTeam} 평균: 출근=${inCount}건 → ${Math.floor(avgInMins/60)}:${String(Math.round(avgInMins%60)).padStart(2,'0')}, 퇴근=${outCount}건 → ${Math.floor(avgOutMins/60)}:${String(Math.round(avgOutMins%60)).padStart(2,'0')}`);
-            
 
             document.getElementById('dept_avg_title').innerText = `👥 ${userTeam} 평균 출퇴근`;
-            
+
             if (inCount > 0) {
                 const inHour = Math.floor(avgInMins / 60);
                 const inMin = Math.round(avgInMins % 60);
@@ -1432,7 +1329,7 @@
                 document.getElementById('dept_avg_in').innerText = '-';
                 document.getElementById('dept_avg_in_label').innerText = `${userTeam} 평균`;
             }
-            
+
             if (outCount > 0) {
                 const outHour = Math.floor(avgOutMins / 60);
                 const outMin = Math.round(avgOutMins % 60);
@@ -1443,7 +1340,6 @@
                 document.getElementById('dept_avg_out_label').innerText = `${userTeam} 평균`;
             }
         }
-        
 
         async function memberSwitchMonth(m) {
             currentMemberMonth = m;
@@ -1465,38 +1361,35 @@
             sel.innerHTML = '<option value="">대상자 선택</option>';
             uniqueUsers.sort((a,b) => a.displayName.localeCompare(b.displayName)).forEach(u => { const o = document.createElement('option'); o.value = u.key; o.text = u.displayName; sel.appendChild(o); });
             sel.disabled = false;
-            
+
             let calculatedData = null;
-            if (selectedUserKey && uniqueUsers.some(u => u.key === selectedUserKey)) { 
-                sel.value = selectedUserKey; 
+            if (selectedUserKey && uniqueUsers.some(u => u.key === selectedUserKey)) {
+                sel.value = selectedUserKey;
                 calculatedData = memberCalculateData(selectedUserKey);
                 memberUpdateUI(calculatedData);
                 calculateDeptStats(selectedUserKey, m);
-                
+
                 const commuteTab = document.getElementById('tab-commute');
                 if (commuteTab && commuteTab.classList.contains('active')) {
-                    console.log('🔄 월 변경: 출퇴근 패턴 차트 업데이트');
                     setTimeout(() => {
                         updateWeekdayCommuteChart();
                     }, 100);
                 }
             }
-            else if (uniqueUsers.length > 0) { 
-                selectedUserKey = uniqueUsers[0].key; 
-                sel.value = selectedUserKey; 
+            else if (uniqueUsers.length > 0) {
+                selectedUserKey = uniqueUsers[0].key;
+                sel.value = selectedUserKey;
                 calculatedData = memberCalculateData(selectedUserKey);
                 memberUpdateUI(calculatedData);
                 calculateDeptStats(selectedUserKey, m);
-                
+
                 const commuteTab = document.getElementById('tab-commute');
                 if (commuteTab && commuteTab.classList.contains('active')) {
-                    console.log('🔄 월 변경: 출퇴근 패턴 차트 업데이트');
                     setTimeout(() => {
                         updateWeekdayCommuteChart();
                     }, 100);
                 }
             }
-            
 
             calculateOrgStats(m);
         }
@@ -1527,26 +1420,14 @@
             }
         }
 
-        function memberInitChart(data = null) {
-            const ctx = document.getElementById('memberWorkChart').getContext('2d');
-            if (memberMyChart) memberMyChart.destroy();
-            const d = data ? [data.stdHours, data.totalHours, data.overHours, data.vacationHours] : [0,0,0,0];
-            memberMyChart = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: ['기준근로', '총 근무', '초과 근무', '휴가 사용'], datasets: [{ label: '시간', data: d, backgroundColor: ['#94a3b8', '#8b5cf6', '#ef4444', '#10b981'], borderRadius: 6, barThickness: 50 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y.toFixed(1)} 시간` } } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
-            });
-        }
-
         function memberCalculateData(key) {
             const [targetName, targetCompName] = key.split('|');
             const userRows = memberRawData.filter(r => r['이름'] === targetName && (r['회사내 이름'] || '') === targetCompName);
             if (!userRows.length) return null;
             const dailyMap = new Map();
-            
+
             userRows.forEach(row => {
                 let rawDateValue = row['날짜'];
-                
 
                 if (rawDateValue && typeof rawDateValue === 'string') {
 
@@ -1554,34 +1435,34 @@
 
                     rawDateValue = rawDateValue.replace(/-$/, '');
                 }
-                
+
                 let dateStr = rawDateValue || '알 수 없음';
-                if (typeof dateStr === 'string' && dateStr.includes('-')) { 
-                    try { 
-                        const d = new Date(dateStr); 
-                        dateStr = `${d.getMonth()+1}/${d.getDate()}`; 
-                    } catch(e) {} 
+                if (typeof dateStr === 'string' && dateStr.includes('-')) {
+                    try {
+                        const d = new Date(dateStr);
+                        dateStr = `${d.getMonth()+1}/${d.getDate()}`;
+                    } catch(e) {}
                 }
-                
+
                 const total = memberParseToMinutes(row['총 근무']), vacation = memberParseToMinutes(row['휴가시간']);
                 let inTime = memberParseToMinutes(row['출근시각']), outTime = memberParseToMinutes(row['퇴근시각']);
                 const hasHolidayType = row['휴일구분'] && String(row['휴일구분']).trim() !== '';
                 const specialNote = row['특이사항'] ? String(row['특이사항']).trim() : '';
                 const isBeforeJoinDate = specialNote.includes('입사일 이전');
                 const isMissing = !row['근무정책'] && !row['휴가정책'] && !row['휴일구분'];
-                
+
                 if (!dailyMap.has(dateStr)) {
-                    dailyMap.set(dateStr, { 
-                        date: dateStr, 
+                    dailyMap.set(dateStr, {
+                        date: dateStr,
                         rawDate: rawDateValue,
-                        total: 0, 
-                        vacation: 0, 
-                        in: inTime > 0 ? inTime : Infinity, 
-                        out: outTime > 0 ? outTime : -Infinity, 
-                        hasHolidayType: false, 
-                        isBeforeJoinDate: false, 
-                        isMissing: true, 
-                        policies: [] 
+                        total: 0,
+                        vacation: 0,
+                        in: inTime > 0 ? inTime : Infinity,
+                        out: outTime > 0 ? outTime : -Infinity,
+                        hasHolidayType: false,
+                        isBeforeJoinDate: false,
+                        isMissing: true,
+                        policies: []
                     });
                 } else {
 
@@ -1590,9 +1471,9 @@
                         existing.rawDate = rawDateValue;
                     }
                 }
-                
+
                 const day = dailyMap.get(dateStr);
-                day.total += total; 
+                day.total += total;
                 day.vacation += vacation;
                 if (hasHolidayType) { day.hasHolidayType = true; }
                 if (isBeforeJoinDate) { day.isBeforeJoinDate = true; }
@@ -1601,18 +1482,14 @@
                 if (inTime > 0 && inTime < day.in) day.in = inTime;
                 if (outTime > 0 && outTime > day.out) day.out = outTime;
             });
-            
+
             let workDays = 0, totalMins = 0, vacationMins = 0, clockInSum = 0, clockOutSum = 0, clockInCount = 0, clockOutCount = 0, dayByDay = [];
-            
 
             const weekdayOvertime = [0, 0, 0, 0, 0];
 
             const weekdayOvertimeDates = [[], [], [], [], []];
 
             const weekdayMaxCount = [0, 0, 0, 0, 0];
-            
-            console.log('🔍 요일별 초과근무 계산 시작');
-            
             dailyMap.forEach(day => {
                 const finalIn = day.in === Infinity ? 0 : day.in, finalOut = day.out === -Infinity ? 0 : day.out;
                 const isWorkDay = !day.hasHolidayType && !day.isBeforeJoinDate;
@@ -1620,7 +1497,6 @@
                 if (!day.isBeforeJoinDate) { totalMins += day.total + day.vacation; vacationMins += day.vacation; }
                 if (finalIn > 0) { clockInSum += finalIn; clockInCount++; }
                 if (finalOut > 0) { clockOutSum += finalOut; clockOutCount++; }
-                
 
                 if (day.rawDate) {
                     const dateStr = String(day.rawDate);
@@ -1635,21 +1511,15 @@
                         } catch(e) {}
                     }
                 }
-                
 
                 if (day.rawDate) {
                     const dateStr = String(day.rawDate);
-                    console.log(`날짜 원본: "${dateStr}", 타입: ${typeof dateStr}`);
-                    
                     if (dateStr.includes('-')) {
                         try {
                             const dateObj = new Date(dateStr);
                             const dayOfWeek = dateObj.getDay();
                             const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                             const totalHours = (day.total / 60).toFixed(1);
-                            
-                            console.log(`  → 날짜객체: ${dateObj.toLocaleDateString()}, 요일: ${dayNames[dayOfWeek]}(${dayOfWeek}), 근무: ${totalHours}시간(${day.total}분)`);
-                            
 
                             if (dayOfWeek >= 1 && dayOfWeek <= 5) {
                                 if (day.total >= 480) {
@@ -1660,50 +1530,36 @@
                                         rawDate: dateStr,
                                         hours: totalHours
                                     });
-                                    console.log(`  ✅ ${dayNames[dayOfWeek]} 초과근무 카운트! (${day.total}분 >= 480분) → 현재: ${weekdayOvertime[dayOfWeek - 1]}회`);
                                 } else {
-                                    console.log(`  ⚪ ${dayNames[dayOfWeek]} 근무시간 부족 (${day.total}분 < 480분)`);
                                 }
                             } else {
-                                console.log(`  ⚫ 주말(${dayNames[dayOfWeek]}) 제외`);
                             }
                         } catch(e) {
-                            console.error('  ❌ 날짜 파싱 오류:', e);
                         }
                     } else {
-                        console.log(`  ⚠️ 날짜 형식 문제: "-" 문자 없음`);
                     }
                 }
-                
-                dayByDay.push({ 
-                    date: day.date, 
+
+                dayByDay.push({
+                    date: day.date,
                     rawDate: day.rawDate,
-                    total: day.total, 
-                    vacation: day.vacation, 
-                    over: Math.max(0, day.total - 480), 
-                    in: finalIn, 
-                    out: finalOut, 
-                    isWorkDay: isWorkDay, 
-                    isMissing: day.isMissing && !day.isBeforeJoinDate, 
-                    policy: [...new Set(day.policies)].join(', ') 
+                    total: day.total,
+                    vacation: day.vacation,
+                    over: Math.max(0, day.total - 480),
+                    in: finalIn,
+                    out: finalOut,
+                    isWorkDay: isWorkDay,
+                    isMissing: day.isMissing && !day.isBeforeJoinDate,
+                    policy: [...new Set(day.policies)].join(', ')
                 });
             });
-            
-            console.log('📊 요일별 초과근무 최종 결과:', weekdayOvertime, '← [월, 화, 수, 목, 금]');
-            console.log('   월요일:', weekdayOvertime[0], '회');
-            console.log('   화요일:', weekdayOvertime[1], '회');
-            console.log('   수요일:', weekdayOvertime[2], '회');
-            console.log('   목요일:', weekdayOvertime[3], '회');
-            console.log('   금요일:', weekdayOvertime[4], '회');
-            console.log('📅 요일별 최대 가능 횟수:', weekdayMaxCount, '← [월, 화, 수, 목, 금]');
-            
+
             const stdMins = workDays * 480, overMins = Math.max(0, totalMins - stdMins);
             const avgIn = clockInCount > 0 ? clockInSum / clockInCount : 0, avgOut = clockOutCount > 0 ? clockOutSum / clockOutCount : 0;
             const vacationInfo = getVacationInfo(targetName, currentMemberMonth);
-            
 
             const avgHoursPerDay = workDays > 0 ? totalMins / workDays / 60 : 0;
-            
+
             memberCurrentCalculatedData = {
                 name: targetCompName ? `${targetName} (${targetCompName})` : targetName, realName: targetName, dayByDay, workDays,
                 stdHoursRaw: stdMins / 60, totalHoursRaw: totalMins / 60, overHoursRaw: overMins / 60, vacationHoursRaw: vacationMins / 60,
@@ -1748,7 +1604,6 @@
             document.getElementById('member_val_missing').innerText = result.display.missing;
             document.getElementById('member_val_avgIn').innerText = result.display.avgIn;
             document.getElementById('member_val_avgOut').innerText = result.display.avgOut;
-            
 
             const totalDot = document.getElementById('total_status_dot');
             if (totalDot) {
@@ -1761,13 +1616,11 @@
                     totalDot.setAttribute('data-tooltip', '기록 누락된 건이 없습니다.');
                 }
             }
-            
 
             const overtimeDot = document.getElementById('overtime_status_dot');
             if (overtimeDot) {
                 overtimeDot.classList.remove('green', 'red');
                 overtimeDot.classList.add('red');
-                
 
                 if (result.display.overTime === '-' || result.display.overTime === '0시간') {
                     overtimeDot.setAttribute('data-tooltip', '초과 근무가 없습니다.');
@@ -1775,7 +1628,6 @@
                     overtimeDot.setAttribute('data-tooltip', '초과 근무가 발생했습니다.');
                 }
             }
-            
 
             const missingDot = document.getElementById('missing_status_dot');
             if (missingDot) {
@@ -1789,7 +1641,6 @@
                     missingDot.setAttribute('data-tooltip', '기록이 누락된 부분이 있습니다.');
                 }
             }
-            
 
             const avgInDot = document.getElementById('avgin_status_dot');
             if (avgInDot) {
@@ -1802,7 +1653,6 @@
                     avgInDot.setAttribute('data-tooltip', '이번 달 평균 출근 시각입니다.');
                 }
             }
-            
 
             const avgOutDot = document.getElementById('avgout_status_dot');
             if (avgOutDot) {
@@ -1815,71 +1665,54 @@
                     avgOutDot.setAttribute('data-tooltip', '이번 달 평균 퇴근 시각입니다.');
                 }
             }
-            
 
             const avgHours = Math.floor(result.avgHoursPerDay);
             const avgMins = Math.round((result.avgHoursPerDay - avgHours) * 60);
             document.getElementById('member_val_avgHoursPerDay').innerText = `${avgHours}.${String(avgMins).padStart(2,'0')}h`;
-            
-
-            console.log('📊 차트 업데이트 호출, 데이터:', result.weekdayOvertime);
             if (result.weekdayOvertime && Array.isArray(result.weekdayOvertime)) {
                 updateWeekdayOvertimeChart(result.weekdayOvertime);
             } else {
-                console.error('❌ 요일별 데이터가 없거나 배열이 아님:', result.weekdayOvertime);
                 updateWeekdayOvertimeChart([0, 0, 0, 0, 0]);
             }
         }
-        
+
         function switchAnalysisTab(tabName) {
-            console.log('🔄 탭 전환:', tabName);
-            
             document.querySelectorAll('.analysis-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.analysis-tab-content').forEach(content => {
                 content.classList.remove('active');
                 content.style.display = 'none';
             });
-            
+
             const targetTab = document.getElementById(`tab-${tabName}`);
             const targetButton = document.querySelector(`.analysis-tab[data-tab="${tabName}"]`);
-            
+
             if (targetTab && targetButton) {
                 targetButton.classList.add('active');
                 targetTab.style.display = 'block';
                 targetTab.classList.add('active');
             }
-            
-            console.log('탭이 활성화되었습니다:', tabName);
-            
             if (tabName === 'commute') {
-                console.log('📈 출퇴근 패턴 탭 - 차트 업데이트 대기');
-                
                 setTimeout(() => {
-                    console.log('차트 업데이트 시작');
                     updateWeekdayCommuteChart();
                 }, 300);
             }
         }
-        
+
         let weekdayOvertimeChart = null;
         let weekdayCommuteChart = null;
-        
+
         function updateWeekdayOvertimeChart(weekdayData) {
-            console.log('🎨 요일별 차트 업데이트 시작, 데이터:', weekdayData);
-            
             const ctx = document.getElementById('weekdayOvertimeChart');
             if (!ctx) {
-                console.error('❌ weekdayOvertimeChart 캔버스를 찾을 수 없음!');
                 return;
             }
-            
+
             if (weekdayOvertimeChart) {
                 weekdayOvertimeChart.destroy();
             }
-            
 
             const displayData = weekdayData.every(v => v === 0) ? [0, 0, 0, 0, 0] : weekdayData;
-            
+
             weekdayOvertimeChart = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -1915,13 +1748,12 @@
                                 label: function(context) {
                                     const actualCount = context.parsed.y;
                                     const dayIndex = context.dataIndex;
-                                    
 
                                     if (memberCurrentCalculatedData && memberCurrentCalculatedData.weekdayMaxCount) {
                                         const maxCount = memberCurrentCalculatedData.weekdayMaxCount[dayIndex];
                                         return ` ${actualCount}/${maxCount}회`;
                                     }
-                                    
+
                                     return ` ${actualCount}회`;
                                 }
                             }
@@ -1944,68 +1776,53 @@
                     }
                 }
             });
-            
-            console.log('✅ 차트 생성 완료!');
-            
             updateOvertimeInsights();
         }
-        
+
         function updateWeekdayCommuteChart() {
-            console.log('🎨 출퇴근 차트 업데이트 시작');
-            console.log('memberCurrentCalculatedData:', memberCurrentCalculatedData);
-            
+
             if (!memberCurrentCalculatedData) {
-                console.error('❌ memberCurrentCalculatedData가 없습니다');
                 return;
             }
-            
+
             const ctx = document.getElementById('weekdayCommuteChart');
-            console.log('캔버스 요소:', ctx);
-            
             if (!ctx) {
-                console.error('❌ weekdayCommuteChart 캔버스를 찾을 수 없습니다');
                 return;
             }
-            
+
             if (weekdayCommuteChart) {
-                console.log('기존 차트 파괴');
                 weekdayCommuteChart.destroy();
                 weekdayCommuteChart = null;
             }
-            
+
             const weekdayInTimes = [0, 0, 0, 0, 0];
             const weekdayOutTimes = [0, 0, 0, 0, 0];
             const weekdayCounts = [0, 0, 0, 0, 0];
-            
-            console.log('dayByDay 데이터:', memberCurrentCalculatedData.dayByDay);
-            console.log('dayByDay 개수:', memberCurrentCalculatedData.dayByDay.length);
-            
+
             let sampleCount = 0;
             let processedDays = 0;
-            
+
             memberCurrentCalculatedData.dayByDay.forEach((day, index) => {
                 processedDays++;
-                
+
                 if (index === 0) {
-                    console.log('첫 번째 day 객체:', day);
                 }
-                
+
                 if (day.rawDate) {
                     try {
                         const dateObj = new Date(day.rawDate);
                         const dayOfWeek = dateObj.getDay();
-                        
+
                         if (dayOfWeek >= 1 && dayOfWeek <= 5) {
                             const idx = dayOfWeek - 1;
-                            
+
                             const finalIn = day.in === Infinity ? 0 : day.in;
                             const finalOut = day.out === -Infinity ? 0 : day.out;
-                            
+
                             if (sampleCount < 3) {
-                                console.log(`[샘플 ${sampleCount + 1}] 날짜: ${day.rawDate}, 요일: ${dayOfWeek}, in: ${day.in}, out: ${day.out}, finalIn: ${finalIn}, finalOut: ${finalOut}`);
                                 sampleCount++;
                             }
-                            
+
                             if (finalIn > 0) {
                                 weekdayInTimes[idx] += finalIn;
                             }
@@ -2017,52 +1834,29 @@
                             }
                         }
                     } catch(e) {
-                        console.error('날짜 처리 오류:', e);
                     }
                 } else {
                     if (processedDays <= 3) {
-                        console.log(`rawDate 없음 (index ${index}):`, day);
                     }
                 }
             });
-            
-            console.log(`✅ 총 ${processedDays}개 날짜 처리 완료`);
-            
-            console.log('수집된 데이터:');
-            console.log('  weekdayInTimes:', weekdayInTimes);
-            console.log('  weekdayOutTimes:', weekdayOutTimes);
-            console.log('  weekdayCounts:', weekdayCounts);
-            
-            const avgInTimes = weekdayInTimes.map((sum, i) => 
+
+            const avgInTimes = weekdayInTimes.map((sum, i) =>
                 weekdayCounts[i] > 0 ? sum / weekdayCounts[i] : null
             );
-            const avgOutTimes = weekdayOutTimes.map((sum, i) => 
+            const avgOutTimes = weekdayOutTimes.map((sum, i) =>
                 weekdayCounts[i] > 0 ? sum / weekdayCounts[i] : null
             );
-            
-            console.log('계산된 평균:');
-            console.log('  avgInTimes:', avgInTimes);
-            console.log('  avgOutTimes:', avgOutTimes);
-            
+
             const hasData = avgInTimes.some(t => t !== null) || avgOutTimes.some(t => t !== null);
-            
+
             if (!hasData) {
-                console.warn('⚠️ 출퇴근 데이터가 없습니다!');
                 document.getElementById('commute-insights').innerHTML = '<div style="color: #dc2626;">이 구성원은 선택한 월에 출퇴근 기록이 없습니다.<br>다른 구성원을 선택해주세요.</div>';
                 return;
             }
-            
+
             try {
-                console.log('차트 생성 시작...');
-                console.log('캔버스 상태:', {
-                    width: ctx.width,
-                    height: ctx.height,
-                    clientWidth: ctx.clientWidth,
-                    clientHeight: ctx.clientHeight,
-                    offsetWidth: ctx.offsetWidth,
-                    offsetHeight: ctx.offsetHeight
-                });
-                
+
                 weekdayCommuteChart = new Chart(ctx.getContext('2d'), {
                 type: 'line',
                 data: {
@@ -2090,7 +1884,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
+                        legend: {
                             display: true,
                             position: 'top',
                             labels: { font: { size: 11 } }
@@ -2125,35 +1919,27 @@
                     }
                 }
             });
-            
-            console.log('✅ 출퇴근 차트 생성 완료!');
-            console.log('차트 객체:', weekdayCommuteChart);
-            console.log('차트 크기:', ctx.width, 'x', ctx.height);
-            
+
             weekdayCommuteChart.resize();
             weekdayCommuteChart.update('none');
-            
-            console.log('📐 차트 크기 조정 완료');
-            
             updateCommuteInsights(avgInTimes, avgOutTimes);
-            
+
             } catch(error) {
-                console.error('❌ 차트 생성 오류:', error);
-                console.error('오류 스택:', error.stack);
+
                 document.getElementById('commute-insights').innerHTML = '<div style="color: #dc2626;">차트를 생성할 수 없습니다. 페이지를 새로고침해주세요.</div>';
             }
         }
-        
+
         function updateOvertimeInsights() {
             if (!memberCurrentCalculatedData) return;
-            
+
             const weekdayOvertime = memberCurrentCalculatedData.weekdayOvertime || [0, 0, 0, 0, 0];
             const weekdayMaxCount = memberCurrentCalculatedData.weekdayMaxCount || [0, 0, 0, 0, 0];
             const dayNames = ['월요일', '화요일', '수요일', '목요일', '금요일'];
-            
+
             const maxIdx = weekdayOvertime.indexOf(Math.max(...weekdayOvertime));
             const minIdx = weekdayOvertime.indexOf(Math.min(...weekdayOvertime.filter(v => v > 0)));
-            
+
             let html = '';
             if (weekdayOvertime[maxIdx] > 0) {
                 html += `<div>• 가장 바쁜 요일: <strong>${dayNames[maxIdx]}</strong> (${weekdayOvertime[maxIdx]}/${weekdayMaxCount[maxIdx]}회)</div>`;
@@ -2161,67 +1947,63 @@
             if (minIdx >= 0 && weekdayOvertime[minIdx] > 0) {
                 html += `<div>• 가장 여유로운 요일: <strong>${dayNames[minIdx]}</strong> (${weekdayOvertime[minIdx]}/${weekdayMaxCount[minIdx]}회)</div>`;
             }
-            
+
             const totalOvertime = weekdayOvertime.reduce((a, b) => a + b, 0);
             html += `<div>• 총 초과근무: <strong>${totalOvertime}회</strong></div>`;
-            
+
             document.getElementById('overtime-insights').innerHTML = html || '<div>초과근무 기록이 없습니다.</div>';
         }
-        
+
         function updateCommuteInsights(avgInTimes, avgOutTimes) {
             const dayNames = ['월요일', '화요일', '수요일', '목요일', '금요일'];
-            
+
             const validInTimes = avgInTimes.filter(t => t !== null);
             const validOutTimes = avgOutTimes.filter(t => t !== null);
-            
+
             if (validInTimes.length === 0) {
                 document.getElementById('commute-insights').innerHTML = '<div>출퇴근 기록이 없습니다.</div>';
                 return;
             }
-            
+
             const earliestIn = Math.min(...validInTimes);
             const latestOut = Math.max(...validOutTimes);
-            
+
             const earliestInIdx = avgInTimes.indexOf(earliestIn);
             const latestOutIdx = avgOutTimes.indexOf(latestOut);
-            
+
             const formatTime = (mins) => {
                 const h = Math.floor(mins / 60);
                 const m = Math.round(mins % 60);
                 return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
             };
-            
+
             let html = '';
             html += `<div>• 가장 빠른 출근: <strong>${dayNames[earliestInIdx]} ${formatTime(earliestIn)}</strong></div>`;
             html += `<div>• 가장 늦은 퇴근: <strong>${dayNames[latestOutIdx]} ${formatTime(latestOut)}</strong></div>`;
-            
+
             document.getElementById('commute-insights').innerHTML = html;
         }
-        
 
         window.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 const ctx = document.getElementById('weekdayOvertimeChart');
                 if (ctx && !weekdayOvertimeChart) {
-                    console.log('📊 초기 차트 생성');
                     updateWeekdayOvertimeChart([0, 0, 0, 0, 0]);
                 }
             }, 1000);
         });
 
-        document.getElementById('memberUserSelect').addEventListener('change', e => { 
-            if (e.target.value) { 
+        document.getElementById('memberUserSelect').addEventListener('change', e => {
+            if (e.target.value) {
                 const userKey = e.target.value;
-                
 
                 if (hasAccess(userKey)) {
                     selectedUserKey = userKey;
                     memberUpdateUI(memberCalculateData(userKey));
                     calculateDeptStats(userKey, currentMemberMonth);
-                    
+
                     const commuteTab = document.getElementById('tab-commute');
                     if (commuteTab && commuteTab.classList.contains('active')) {
-                        console.log('🔄 출퇴근 패턴 탭이 활성화되어 있어 차트를 업데이트합니다');
                         setTimeout(() => {
                             updateWeekdayCommuteChart();
                         }, 100);
@@ -2232,21 +2014,19 @@
                         selectedUserKey = userKey;
                         memberUpdateUI(memberCalculateData(userKey));
                         calculateDeptStats(userKey, currentMemberMonth);
-                        
+
                         const commuteTab = document.getElementById('tab-commute');
                         if (commuteTab && commuteTab.classList.contains('active')) {
-                            console.log('🔄 출퇴근 패턴 탭이 활성화되어 있어 차트를 업데이트합니다');
                             setTimeout(() => {
                                 updateWeekdayCommuteChart();
                             }, 100);
                         }
                     }, false);
                 }
-            } 
+            }
         });
         document.getElementById('memberModalClose').onclick = () => document.getElementById('memberModalOverlay').style.display = 'none';
         window.onclick = e => { if (e.target == document.getElementById('memberModalOverlay')) document.getElementById('memberModalOverlay').style.display = 'none'; };
-
 
         let ceoRawData = [], ceoDeptChart = null, ceoTeamChart = null, ceoTrendChart = null;
 
@@ -2267,9 +2047,7 @@
             return 0;
         }
 
-        function ceoFormatHours(mins) { return (mins / 60).toFixed(1); }
-        
-        function ceoFormatHoursMinutes(mins) {
+                function ceoFormatHoursMinutes(mins) {
             const hours = Math.floor(mins / 60);
             const minutes = Math.round(mins % 60);
             if (minutes === 0) {
@@ -2277,29 +2055,25 @@
             }
             return `${hours}시간 ${minutes}분`;
         }
-        
 
         function adjustPercentsTo100(values) {
             if (values.length === 0) return values;
-            
 
             const rounded = values.map(v => Math.round(v * 10) / 10);
-            
 
             const sum = rounded.reduce((a, b) => a + b, 0);
-            
 
             const diff = Math.round((100 - sum) * 10) / 10;
-            
+
             if (diff !== 0) {
 
                 const maxIndex = rounded.indexOf(Math.max(...rounded));
                 rounded[maxIndex] = Math.round((rounded[maxIndex] + diff) * 10) / 10;
             }
-            
+
             return rounded;
         }
-        
+
         function formatMinutesToHoursMinutes(minutes) {
             const hours = Math.floor(minutes / 60);
             const mins = Math.round(minutes % 60);
@@ -2308,29 +2082,6 @@
             }
             return `${hours}시간 ${mins}분`;
         }
-        
-        function formatHoursMinutes(decimalHours) {
-            const hours = Math.floor(decimalHours);
-            const minutes = Math.round((decimalHours - hours) * 60);
-            if (minutes === 0) {
-                return `${hours}시간`;
-            }
-            return `${hours}시간 ${minutes}분`;
-        }
-
-        function ceoGetTeamCategory(name) {
-            if (!name) return '기타';
-            const n = name.trim();
-            if (n.includes('CEO')) return 'EXCLUDED';
-            if (n === '개발팀' || n === '개발팀장' || n === 'CTO') return '개발팀';
-            if (n === '경영지원팀' || n === '경영지원팀장') return '경영지원팀';
-            if (n === '기획1팀' || n === '기획1팀장') return '기획1팀';
-            if (n === '기획2팀' || n === 'COO, 기획2팀장') return '기획2팀';
-            if (n === '메디컬팀' || n === '메디컬팀장') return '메디컬팀';
-            if (n === '품질책임팀장' || n === '품질책임팀') return '품질책임팀';
-            return '기타';
-        }
-        
 
         const TEAM_COLORS = {
             '개발팀': '#3b82f6',
@@ -2341,74 +2092,65 @@
             '품질책임팀': '#6366f1',
             '기타': '#94a3b8'
         };
-        
 
         function adjustPercentsTo100(values) {
             if (values.length === 0) return values;
-            
+
             const total = values.reduce((sum, v) => sum + v, 0);
             if (total === 0) return values;
-            
 
             const rounded = values.map(p => Math.round(p * 10) / 10);
-            
 
             const sum = rounded.reduce((s, v) => s + v, 0);
-            
 
             const diff = Math.round((100 - sum) * 10) / 10;
-            
+
             if (diff !== 0) {
 
                 const maxIndex = rounded.indexOf(Math.max(...rounded));
                 rounded[maxIndex] = Math.round((rounded[maxIndex] + diff) * 10) / 10;
             }
-            
+
             return rounded;
         }
-        
 
         let currentDeptToTeamMap = {};
-        
+
         function getDeptTeamCategory(deptName) {
             return currentDeptToTeamMap[deptName] || '기타';
         }
 
         function ceoInitCharts(deptData, teamData, trendData) {
-            console.log('차트 초기화 - 요일별 데이터:', trendData);
-            
-
             const ctxDept = document.getElementById('ceoDeptChart').getContext('2d');
             if (ceoDeptChart) ceoDeptChart.destroy();
-            
 
             const deptColors = deptData.labels.map(deptName => {
                 const teamCat = getDeptTeamCategory(deptName);
                 return TEAM_COLORS[teamCat] || TEAM_COLORS['기타'];
             });
-            
-            ceoDeptChart = new Chart(ctxDept, { 
-                type: 'doughnut', 
-                data: { 
-                    labels: deptData.labels, 
-                    datasets: [{ 
-                        data: deptData.values, 
+
+            ceoDeptChart = new Chart(ctxDept, {
+                type: 'doughnut',
+                data: {
+                    labels: deptData.labels,
+                    datasets: [{
+                        data: deptData.values,
                         backgroundColor: deptColors,
-                        borderWidth: 0, 
-                        hoverOffset: 20 
-                    }] 
-                }, 
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { 
-                            position: 'bottom', 
-                            labels: { 
-                                usePointStyle: true, 
-                                padding: 15, 
-                                font: { size: 10 } 
-                            } 
+                        borderWidth: 0,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: { size: 10 }
+                            }
                         },
                         tooltip: {
                             callbacks: {
@@ -2419,31 +2161,29 @@
                                 }
                             }
                         }
-                    }, 
-                    cutout: '65%' 
-                } 
+                    },
+                    cutout: '65%'
+                }
             });
-            
 
             const ctxTeam = document.getElementById('ceoTeamChart').getContext('2d');
             if (ceoTeamChart) ceoTeamChart.destroy();
-            
 
             const teamColors = teamData.labels.map(teamName => TEAM_COLORS[teamName] || TEAM_COLORS['기타']);
-            
-            ceoTeamChart = new Chart(ctxTeam, { 
-                type: 'pie', 
-                data: { 
-                    labels: teamData.labels, 
-                    datasets: [{ 
-                        data: teamData.values, 
+
+            ceoTeamChart = new Chart(ctxTeam, {
+                type: 'pie',
+                data: {
+                    labels: teamData.labels,
+                    datasets: [{
+                        data: teamData.values,
                         backgroundColor: teamColors,
-                        borderWidth: 2, 
-                        borderColor: '#fff' 
-                    }] 
-                }, 
-                options: { 
-                    responsive: true, 
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
                     maintainAspectRatio: false,
                     onClick: (event, elements) => {
                         if (elements.length > 0) {
@@ -2452,13 +2192,13 @@
                             showCeoTeamDetailModal(teamName);
                         }
                     },
-                    plugins: { 
-                        legend: { 
-                            position: 'bottom', 
-                            labels: { 
-                                usePointStyle: true, 
-                                padding: 15, 
-                                font: { size: 11, weight: 'bold' } 
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: { size: 11, weight: 'bold' }
                             },
                             onClick: (event, legendItem, legend) => {
                                 const index = legendItem.index;
@@ -2475,27 +2215,27 @@
                                 }
                             }
                         }
-                    } 
-                } 
+                    }
+                }
             });
             const ctxTrend = document.getElementById('ceoTrendChart').getContext('2d');
             if (ceoTrendChart) ceoTrendChart.destroy();
-            ceoTrendChart = new Chart(ctxTrend, { 
-                type: 'bar', 
-                data: { 
-                    labels: trendData.labels, 
-                    datasets: [{ 
-                        label: '평균 근무시간', 
-                        data: trendData.values, 
-                        backgroundColor: '#3b82f6', 
-                        borderRadius: 6, 
-                        barThickness: 60 
-                    }] 
-                }, 
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
+            ceoTrendChart = new Chart(ctxTrend, {
+                type: 'bar',
+                data: {
+                    labels: trendData.labels,
+                    datasets: [{
+                        label: '평균 근무시간',
+                        data: trendData.values,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6,
+                        barThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
@@ -2504,10 +2244,10 @@
                                 }
                             }
                         }
-                    }, 
-                    scales: { 
-                        y: { 
-                            beginAtZero: true, 
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
                             grid: { color: '#f1f5f9' },
                             ticks: {
                                 callback: function(value) {
@@ -2519,17 +2259,17 @@
                                 text: '평균 근무시간',
                                 font: { size: 12 }
                             }
-                        }, 
-                        x: { 
+                        },
+                        x: {
                             grid: { display: false },
                             title: {
                                 display: true,
                                 text: '요일',
                                 font: { size: 12 }
                             }
-                        } 
-                    } 
-                } 
+                        }
+                    }
+                }
             });
         }
 
@@ -2540,7 +2280,6 @@
             const dailyPersonData = {};
             const deptToTeamMap = {};
             let totalOverMins = 0, totalMissingCount = 0;
-            
 
             data.forEach(row => {
                 const dept = row['회사내 이름'];
@@ -2548,8 +2287,6 @@
                 if (dept && org && !deptToTeamMap[dept]) {
                     const orgStr = String(org).trim();
                     let team = '기타';
-                    
-
 
                     if (dept === 'Guy') {
                         team = '경영지원팀';
@@ -2581,14 +2318,10 @@
                     else if (orgStr.includes('품질책임팀')) {
                         team = '품질책임팀';
                     }
-                    
+
                     deptToTeamMap[dept] = team;
                 }
             });
-            
-            console.log('부서-조직 매핑:', deptToTeamMap);
-            
-
             data.forEach(row => {
                 const name = row['이름'], dept = row['회사내 이름'] || '미분류';
                 const dateStr = row['날짜'];
@@ -2599,26 +2332,25 @@
                 const isBeforeJoinDate = specialNote.includes('입사일 이전');
                 if (!name) return;
                 if (isBeforeJoinDate) return;
-                
+
                 const userId = `${name}_${dept}`;
-                if (!users[userId]) { 
-                    users[userId] = { 
-                        name, 
-                        dept, 
-                        overMins: 0, 
-                        totalMins: 0, 
+                if (!users[userId]) {
+                    users[userId] = {
+                        name,
+                        dept,
+                        overMins: 0,
+                        totalMins: 0,
                         workDays: 0,
                         missingCount: 0,
                         dailyMap: new Map()
-                    }; 
-                    if (!missingStats[name]) missingStats[name] = 0; 
+                    };
+                    if (!missingStats[name]) missingStats[name] = 0;
                 }
-                
+
                 const isOffDay = (holidayType && String(holidayType).trim() !== '');
                 const isNoPolicy = !policy || String(policy).trim() === '';
                 const isTimeMissing = (!inTime || String(inTime).trim() === '') || (!outTime || String(outTime).trim() === '');
                 if (!isOffDay && isNoPolicy && isTimeMissing) { users[userId].missingCount++; totalMissingCount++; missingStats[name]++; }
-                
 
                 if (dateStr) {
                     let dateKey;
@@ -2628,7 +2360,7 @@
                     } catch(e) {
                         dateKey = String(dateStr);
                     }
-                    
+
                     if (!users[userId].dailyMap.has(dateKey)) {
                         users[userId].dailyMap.set(dateKey, {
                             workMins: 0,
@@ -2636,13 +2368,12 @@
                             hasHolidayType: false
                         });
                     }
-                    
+
                     const dayData = users[userId].dailyMap.get(dateKey);
                     dayData.workMins += workMins;
                     dayData.vacationMins += vacationMins;
                     if (isOffDay) dayData.hasHolidayType = true;
                 }
-                
 
                 if (!isOffDay && dateStr) {
                     try {
@@ -2657,7 +2388,7 @@
                         const dayOfWeek = weekdays[d.getDay()];
                         const dateKey = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
                         const personDateKey = `${name}_${dateKey}`;
-                        
+
                         if (!dailyPersonData[personDateKey]) {
                             dailyPersonData[personDateKey] = {
                                 name: name,
@@ -2668,16 +2399,14 @@
                         }
                         dailyPersonData[personDateKey].totalMins += workMins;
                     } catch(e) {
-                        console.error('날짜 파싱 오류:', dateStr, e);
                     }
                 }
             });
-            
 
             Object.values(users).forEach(user => {
                 let workDays = 0;
                 let totalMins = 0;
-                
+
                 user.dailyMap.forEach((dayData, dateKey) => {
 
                     if (!dayData.hasHolidayType) {
@@ -2686,34 +2415,31 @@
 
                     totalMins += dayData.workMins + dayData.vacationMins;
                 });
-                
+
                 user.workDays = workDays;
                 user.totalMins = totalMins;
-                
 
                 const stdMins = workDays * 480;
                 user.overMins = Math.max(0, totalMins - stdMins);
-                
+
                 totalOverMins += user.overMins;
-                
 
                 if (!departments[user.dept]) departments[user.dept] = 0;
                 departments[user.dept] += user.overMins;
-                
+
                 const teamCat = deptToTeamMap[user.dept] || '기타';
                 if (teamCat !== 'EXCLUDED') {
                     if (!teams[teamCat]) teams[teamCat] = 0;
                     teams[teamCat] += user.overMins;
                 }
             });
-            
 
             Object.values(dailyPersonData).forEach(personDay => {
                 if (personDay.totalMins > 0 && weekdayData[personDay.dayOfWeek]) {
                     weekdayData[personDay.dayOfWeek].push(personDay.totalMins);
                 }
             });
-            
+
             const weekdayLabels = ['월', '화', '수', '목', '금'];
             const weekdayValues = weekdayLabels.map(day => {
                 const dayData = weekdayData[day];
@@ -2722,13 +2448,6 @@
 
                 return avgMins;
             });
-            console.log('요일별 데이터 수:', weekdayLabels.map((day, i) => `${day}: ${weekdayData[day].length}개`));
-            console.log('요일별 평균값(분):', weekdayLabels.map((day, i) => {
-                const mins = weekdayValues[i];
-                const hours = Math.floor(mins / 60);
-                const minutes = Math.round(mins % 60);
-                return `${day}: ${hours}시간 ${minutes}분`;
-            }));
             const vacationData = getTotalVacationByMonth(currentCeoMonth);
             ceoVacationDetails = vacationData.details;
             ceoMissingDetails = Object.entries(missingStats).filter(([name, count]) => count > 0).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
@@ -2747,16 +2466,14 @@
             const deptTotal = deptValuesRaw.reduce((sum, v) => sum + v, 0);
             const deptValuesPercent = deptTotal > 0 ? deptValuesRaw.map(v => (v / deptTotal * 100)) : deptValuesRaw;
             const deptValues = adjustPercentsTo100(deptValuesPercent);
-            
+
             const teamLabels = Object.keys(teams);
             const teamValuesRaw = Object.values(teams);
             const teamTotal = teamValuesRaw.reduce((sum, v) => sum + v, 0);
             const teamValuesPercent = teamTotal > 0 ? teamValuesRaw.map(v => (v / teamTotal * 100)) : teamValuesRaw;
             const teamValues = adjustPercentsTo100(teamValuesPercent);
-            
 
             currentDeptToTeamMap = deptToTeamMap;
-            
 
             ceoTeamMembersData = {};
             userList.forEach(user => {
@@ -2772,36 +2489,31 @@
                     });
                 }
             });
-            
 
             Object.keys(ceoTeamMembersData).forEach(team => {
                 ceoTeamMembersData[team].sort((a, b) => b.overMins - a.overMins);
             });
-            
+
             ceoInitCharts({ labels: deptLabels, values: deptValues }, { labels: teamLabels, values: teamValues }, { labels: weekdayLabels, values: weekdayValues });
         }
 
         ceoInitCharts({labels:[],values:[]},{labels:[],values:[]},{labels:[],values:[]});
-        
-
-        
 
         function saveNoIssue(pageType) {
             const now = new Date();
-            const dateStr = now.toLocaleString('ko-KR', { 
-                year: 'numeric', 
-                month: '2-digit', 
+            const dateStr = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
                 day: '2-digit',
-                hour: '2-digit', 
+                hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
-            
 
             let userName = '알 수 없음';
             let userDept = '알 수 없음';
             let currentMonth = '';
-            
+
             if (pageType === 'member') {
 
                 currentMonth = currentMemberMonth;
@@ -2811,7 +2523,6 @@
 
                     const userName_raw = userKey.split('|')[0];
                     userName = userName_raw;
-                    
 
                     if (memberRawData && memberRawData.length > 0) {
                         const userRecord = memberRawData.find(r => r['이름'] === userName_raw);
@@ -2825,7 +2536,7 @@
                 userName = 'CEO';
                 userDept = '경영지원팀';
             }
-            
+
             const record = {
                 id: Date.now(),
                 name: userName,
@@ -2835,22 +2546,19 @@
                 page: pageType === 'ceo' ? 'CEO 페이지' : '구성원 페이지',
                 timestamp: now.getTime()
             };
-            
 
             let records = JSON.parse(localStorage.getItem('noIssueRecords') || '[]');
             records.push(record);
             localStorage.setItem('noIssueRecords', JSON.stringify(records));
-            
+
             alert('이상 없음이 확인되었습니다. 감사합니다!');
         }
-        
 
         function loadAdminData() {
             const records = JSON.parse(localStorage.getItem('noIssueRecords') || '[]');
-            
 
             const totalCount = records.length;
-            
+
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const todayCount = records.filter(r => {
@@ -2858,16 +2566,14 @@
                 recordDate.setHours(0, 0, 0, 0);
                 return recordDate.getTime() === today.getTime();
             }).length;
-            
-            const lastCheck = records.length > 0 
-                ? records[records.length - 1].datetime 
+
+            const lastCheck = records.length > 0
+                ? records[records.length - 1].datetime
                 : '-';
-            
 
             document.getElementById('adminTotalCount').innerText = totalCount;
             document.getElementById('adminTodayCount').innerText = todayCount;
             document.getElementById('adminLastCheck').innerText = lastCheck;
-            
 
             const tbody = document.getElementById('adminTableBody');
             if (records.length === 0) {
@@ -2897,38 +2603,32 @@
                     .join('');
             }
         }
-        
 
         function adminDeleteRecord(id) {
             if (!confirm('이 기록을 삭제하시겠습니까?')) return;
-            
+
             let records = JSON.parse(localStorage.getItem('noIssueRecords') || '[]');
             records = records.filter(r => r.id !== id);
             localStorage.setItem('noIssueRecords', JSON.stringify(records));
-            
+
             loadAdminData();
         }
-        
 
         function adminClearAll() {
             if (!confirm('정말로 모든 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
-            
+
             localStorage.removeItem('noIssueRecords');
             loadAdminData();
             alert('모든 기록이 삭제되었습니다.');
         }
-        
 
         document.getElementById('passwordInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 verifyInitialPassword();
             }
         });
-        
 
         document.getElementById('passwordInput').focus();
-        
-        console.log('✅ Google Sheets 연동 근태 분석 시스템 로드 완료');
     </script>
 </body>
 </html>
