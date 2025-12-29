@@ -38,9 +38,62 @@
         .info-card::after { content: '🔍'; position: absolute; top: 10px; right: 10px; font-size: 12px; opacity: 0.3; }
         
         /* 상태 원 스타일 */
-        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+        .status-dot { 
+            display: inline-block; 
+            width: 18px; 
+            height: 18px; 
+            border-radius: 50%; 
+            margin-right: 8px; 
+            position: relative;
+            cursor: help;
+            transition: transform 0.2s;
+        }
+        .status-dot:hover {
+            transform: scale(1.3);
+        }
         .status-dot.green { background-color: #10b981; }
         .status-dot.red { background-color: #ef4444; }
+        
+        /* 툴팁 스타일 */
+        .status-dot[data-tooltip] {
+            position: relative;
+        }
+        .status-dot[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .status-dot[data-tooltip]::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        .status-dot[data-tooltip]:hover::after,
+        .status-dot[data-tooltip]:hover::before {
+            opacity: 1;
+        }
         
         /* Footer 스타일 */
         .page-footer { 
@@ -313,8 +366,8 @@
             <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-8">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                            <h1 id="memberReportTitle" class="text-3xl font-bold mb-2">📊 근태 정산 리포트</h1>
+                        <div style="min-width: 300px;">
+                            <h1 id="memberReportTitle" class="text-3xl font-bold mb-2" style="word-break: keep-all; white-space: normal;">📊 근태 정산 리포트</h1>
                             <p class="opacity-90">월별 탭을 선택하고 구성원을 선택하세요</p>
                         </div>
                         <div class="flex items-center gap-4 bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur-sm">
@@ -337,12 +390,12 @@
                         <div class="lg:col-span-2">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 <div class="info-card blue" onclick="memberShowDetail('workDays')">
-                                    <div class="label"><span class="status-dot green"></span>근무일</div>
+                                    <div class="label"><span class="status-dot green" data-tooltip="이번 달의 공휴일 휴무일을 제외한 근무일입니다."></span>근무일</div>
                                     <div class="value" id="member_val_workDays">-</div>
                                     <div class="sub-value">중복 제외 근무 일수</div>
                                 </div>
                                 <div class="info-card blue">
-                                    <div class="label"><span class="status-dot green"></span>기준 근로시간</div>
+                                    <div class="label"><span class="status-dot green" data-tooltip="일일 근무시간 X 근무일을 한 시간입니다."></span>기준 근로시간</div>
                                     <div class="value" id="member_val_stdHours">-</div>
                                     <div class="sub-value">근무일 × 8시간</div>
                                 </div>
@@ -352,12 +405,12 @@
                                     <div class="sub-value">실제 근무 합계</div>
                                 </div>
                                 <div class="info-card red" onclick="memberShowDetail('overTime')">
-                                    <div class="label"><span class="status-dot green" id="overtime_status_dot"></span>초과 근무</div>
+                                    <div class="label"><span class="status-dot red" id="overtime_status_dot"></span>초과 근무</div>
                                     <div class="value" id="member_val_overTime">-</div>
                                     <div class="sub-value">총 근무 - 기준 시간</div>
                                 </div>
                                 <div class="info-card green" onclick="memberShowDetail('vacation')">
-                                    <div class="label"><span class="status-dot green"></span>휴가 사용</div>
+                                    <div class="label"><span class="status-dot green" data-tooltip="이번 달 사용한 연차입니다."></span>휴가 사용</div>
                                     <div class="value" id="member_val_vacation">-</div>
                                     <div class="sub-value">이번 달 사용한 연차</div>
                                 </div>
@@ -390,6 +443,23 @@
                                         <div class="text-sm text-purple-600 font-semibold mb-2">🌆 평균 퇴근시간</div>
                                         <div class="text-2xl font-bold text-purple-700" id="org_avg_out">-</div>
                                         <div class="text-xs text-purple-500 mt-1">조직 전체 평균</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 소속 부서 평균 출퇴근 -->
+                            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 mb-6 border border-blue-200">
+                                <h3 class="text-lg font-bold text-blue-800 mb-4 text-center" id="dept_avg_title">👥 소속 부서 평균 출퇴근</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                                        <div class="text-sm text-blue-600 font-semibold mb-2">🌅 평균 출근시간</div>
+                                        <div class="text-2xl font-bold text-blue-700" id="dept_avg_in">-</div>
+                                        <div class="text-xs text-blue-500 mt-1" id="dept_avg_in_label">부서 평균</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                                        <div class="text-sm text-cyan-600 font-semibold mb-2">🌆 평균 퇴근시간</div>
+                                        <div class="text-2xl font-bold text-cyan-700" id="dept_avg_out">-</div>
+                                        <div class="text-xs text-cyan-500 mt-1" id="dept_avg_out_label">부서 평균</div>
                                     </div>
                                 </div>
                             </div>
@@ -426,6 +496,9 @@
                     <div class="footer-content">
                         <p style="margin-bottom: 15px;">
                             * 근태 기록 리포트에 이상이 없을 경우, <button class="no-issue-btn" onclick="saveNoIssue('member')">이상 없음</button>을 눌러주세요.
+                        </p>
+                        <p style="margin-bottom: 15px;">
+                            * 리포트 공유일: 매달 첫 번째 수요일입니다. 수정 문의 또는 근태 문의의 경우에는 매달 두 번째 월요일까지입니다.
                         </p>
                         <p>
                             * 근태 기록 관련 문의 방법
@@ -475,7 +548,7 @@
         <div class="p-6 md:p-10">
             <div class="max-w-7xl mx-auto">
                 <header class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-6">
-                    <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                    <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3" style="min-width: 300px; word-break: keep-all; white-space: normal;">
                         <span class="bg-blue-600 p-2 rounded-lg text-white text-xl">📊</span>
                         전사 근태 분석 대시보드
                     </h1>
@@ -547,6 +620,9 @@
                         <p style="margin-bottom: 15px;">
                             * 근태 기록 리포트에 이상이 없을 경우, <button class="no-issue-btn" onclick="saveNoIssue('ceo')">이상 없음</button>을 눌러주세요.
                         </p>
+                        <p style="margin-bottom: 15px;">
+                            * 리포트 공유일: 매달 첫 번째 수요일입니다. 수정 문의 또는 근태 문의의 경우에는 매달 두 번째 월요일까지입니다.
+                        </p>
                         <p>
                             * 근태 기록 관련 문의 방법
                             <span class="help-icon">?
@@ -568,8 +644,8 @@
             <div class="max-w-7xl mx-auto">
                 <div class="admin-header">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold mb-2">🔐 관리자 대시보드</h1>
+                        <div style="min-width: 250px;">
+                            <h1 class="text-3xl font-bold mb-2" style="word-break: keep-all; white-space: normal;">🔐 관리자 대시보드</h1>
                             <p class="text-blue-100">이상 없음 확인 기록 관리</p>
                         </div>
                         <div class="flex gap-3">
@@ -1125,6 +1201,132 @@
             document.getElementById('org_avg_out').innerText = `${String(outHour).padStart(2,'0')}:${String(outMin).padStart(2,'0')}`;
         }
         
+        // 부서 평균 계산 함수
+        function calculateDeptStats(userKey, month) {
+            if (!memberRawData || memberRawData.length === 0 || !userKey) {
+                // 데이터가 없으면 UI 초기화
+                document.getElementById('dept_avg_in').innerText = '-';
+                document.getElementById('dept_avg_out').innerText = '-';
+                return;
+            }
+            
+            // 선택된 사용자의 부서(회사내 이름) 찾기
+            const [userName, userCompName] = userKey.split('|');
+            const userDept = userCompName || userName;
+            
+            // 부서-조직 매핑 구축
+            const deptToTeamMap = {};
+            memberRawData.forEach(row => {
+                const dept = row['회사내 이름'];
+                const org = row['조직'];
+                if (dept && org && !deptToTeamMap[dept]) {
+                    const orgStr = String(org).trim();
+                    let team = '기타';
+                    
+                    // 특별 케이스들
+                    // Guy는 CEO지만 경영지원팀으로 분류
+                    if (dept === 'Guy') {
+                        team = '경영지원팀';
+                    }
+                    // Dante는 메디컬팀으로 분류
+                    else if (dept === 'Dante') {
+                        team = '메디컬팀';
+                    }
+                    // CEO 제외
+                    else if (orgStr.includes('CEO') && !orgStr.includes('경영지원')) {
+                        team = 'EXCLUDED';
+                    }
+                    // 조직명에서 팀 추출
+                    else if (orgStr.includes('개발팀') || orgStr === 'CTO') {
+                        team = '개발팀';
+                    }
+                    else if (orgStr.includes('경영지원팀')) {
+                        team = '경영지원팀';
+                    }
+                    else if (orgStr.includes('기획1팀')) {
+                        team = '기획1팀';
+                    }
+                    else if (orgStr.includes('기획2팀') || orgStr.includes('COO')) {
+                        team = '기획2팀';
+                    }
+                    else if (orgStr.includes('메디컬팀')) {
+                        team = '메디컬팀';
+                    }
+                    else if (orgStr.includes('품질책임팀')) {
+                        team = '품질책임팀';
+                    }
+                    
+                    deptToTeamMap[dept] = team;
+                }
+            });
+            
+            // 선택된 사용자의 팀 찾기
+            const userTeam = deptToTeamMap[userDept] || '기타';
+            
+            console.log(`👤 선택된 사용자: ${userDept}, 소속 팀: ${userTeam}`);
+            
+            // 같은 팀에 속한 모든 사용자의 출퇴근 시간 수집
+            let totalInSum = 0;
+            let totalOutSum = 0;
+            let inCount = 0;
+            let outCount = 0;
+            
+            memberRawData.forEach(row => {
+                const dept = row['회사내 이름'];
+                const team = deptToTeamMap[dept];
+                
+                // 같은 팀이 아니면 제외
+                if (team !== userTeam) return;
+                
+                const special = row['특이사항'] ? String(row['특이사항']).trim() : '';
+                
+                // 입사일 이전 제외
+                if (special.includes('입사일 이전')) return;
+                
+                const inTime = memberParseToMinutes(row['출근시각']);
+                const outTime = memberParseToMinutes(row['퇴근시각']);
+                
+                if (inTime > 0) {
+                    totalInSum += inTime;
+                    inCount++;
+                }
+                
+                if (outTime > 0) {
+                    totalOutSum += outTime;
+                    outCount++;
+                }
+            });
+            
+            // 평균 계산
+            const avgInMins = inCount > 0 ? totalInSum / inCount : 0;
+            const avgOutMins = outCount > 0 ? totalOutSum / outCount : 0;
+            
+            console.log(`👥 ${userTeam} 평균: 출근=${inCount}건 → ${Math.floor(avgInMins/60)}:${String(Math.round(avgInMins%60)).padStart(2,'0')}, 퇴근=${outCount}건 → ${Math.floor(avgOutMins/60)}:${String(Math.round(avgOutMins%60)).padStart(2,'0')}`);
+            
+            // UI 업데이트
+            document.getElementById('dept_avg_title').innerText = `👥 ${userTeam} 평균 출퇴근`;
+            
+            if (inCount > 0) {
+                const inHour = Math.floor(avgInMins / 60);
+                const inMin = Math.round(avgInMins % 60);
+                document.getElementById('dept_avg_in').innerText = `${String(inHour).padStart(2,'0')}:${String(inMin).padStart(2,'0')}`;
+                document.getElementById('dept_avg_in_label').innerText = `${userTeam} 평균 (${inCount}건)`;
+            } else {
+                document.getElementById('dept_avg_in').innerText = '-';
+                document.getElementById('dept_avg_in_label').innerText = `${userTeam} 평균`;
+            }
+            
+            if (outCount > 0) {
+                const outHour = Math.floor(avgOutMins / 60);
+                const outMin = Math.round(avgOutMins % 60);
+                document.getElementById('dept_avg_out').innerText = `${String(outHour).padStart(2,'0')}:${String(outMin).padStart(2,'0')}`;
+                document.getElementById('dept_avg_out_label').innerText = `${userTeam} 평균 (${outCount}건)`;
+            } else {
+                document.getElementById('dept_avg_out').innerText = '-';
+                document.getElementById('dept_avg_out_label').innerText = `${userTeam} 평균`;
+            }
+        }
+        
 
         async function memberSwitchMonth(m) {
             currentMemberMonth = m;
@@ -1152,12 +1354,14 @@
                 sel.value = selectedUserKey; 
                 calculatedData = memberCalculateData(selectedUserKey);
                 memberUpdateUI(calculatedData);
+                calculateDeptStats(selectedUserKey, m);
             }
             else if (uniqueUsers.length > 0) { 
                 selectedUserKey = uniqueUsers[0].key; 
                 sel.value = selectedUserKey; 
                 calculatedData = memberCalculateData(selectedUserKey);
                 memberUpdateUI(calculatedData);
+                calculateDeptStats(selectedUserKey, m);
             }
             
             // 조직 평균 출퇴근 계산
@@ -1208,7 +1412,16 @@
             const dailyMap = new Map();
             
             userRows.forEach(row => {
-                const rawDateValue = row['날짜']; // 원본 날짜를 먼저 저장
+                let rawDateValue = row['날짜']; // 원본 날짜를 먼저 저장
+                
+                // 날짜 형식 정규화: "2025. 9. 27" → "2025-09-27"
+                if (rawDateValue && typeof rawDateValue === 'string') {
+                    // 점(.)과 공백을 하이픈(-)으로 변환
+                    rawDateValue = rawDateValue.replace(/\.\s*/g, '-').trim();
+                    // 끝에 하이픈이 있으면 제거
+                    rawDateValue = rawDateValue.replace(/-$/, '');
+                }
+                
                 let dateStr = rawDateValue || '알 수 없음';
                 if (typeof dateStr === 'string' && dateStr.includes('-')) { 
                     try { 
@@ -1227,7 +1440,7 @@
                 if (!dailyMap.has(dateStr)) {
                     dailyMap.set(dateStr, { 
                         date: dateStr, 
-                        rawDate: rawDateValue,  // 원본 날짜 저장
+                        rawDate: rawDateValue,  // 원본 날짜 저장 (이미 정규화됨)
                         total: 0, 
                         vacation: 0, 
                         in: inTime > 0 ? inTime : Infinity, 
@@ -1260,6 +1473,10 @@
             
             // 요일별 초과근무 횟수 (월=0, 화=1, 수=2, 목=3, 금=4)
             const weekdayOvertime = [0, 0, 0, 0, 0];
+            // 요일별 초과근무 날짜 목록
+            const weekdayOvertimeDates = [[], [], [], [], []];
+            // 요일별 최대 가능 횟수 (해당 월에 각 요일이 몇 번 있는지)
+            const weekdayMaxCount = [0, 0, 0, 0, 0];
             
             console.log('🔍 요일별 초과근무 계산 시작');
             
@@ -1270,6 +1487,21 @@
                 if (!day.isBeforeJoinDate) { totalMins += day.total + day.vacation; vacationMins += day.vacation; }
                 if (finalIn > 0) { clockInSum += finalIn; clockInCount++; }
                 if (finalOut > 0) { clockOutSum += finalOut; clockOutCount++; }
+                
+                // 요일별 최대 가능 횟수 계산 (모든 날짜의 요일 카운트)
+                if (day.rawDate) {
+                    const dateStr = String(day.rawDate);
+                    if (dateStr.includes('-')) {
+                        try {
+                            const dateObj = new Date(dateStr);
+                            const dayOfWeek = dateObj.getDay();
+                            // 월~금 (1~5)만 카운트
+                            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                                weekdayMaxCount[dayOfWeek - 1]++;
+                            }
+                        } catch(e) {}
+                    }
+                }
                 
                 // 요일별 초과근무 카운트 (월~금, 8시간 이상)
                 if (day.rawDate) {
@@ -1289,6 +1521,12 @@
                             if (dayOfWeek >= 1 && dayOfWeek <= 5) {
                                 if (day.total >= 480) {
                                     weekdayOvertime[dayOfWeek - 1]++;
+                                    // 날짜 정보도 저장 (화면 표시용 날짜와 근무시간)
+                                    weekdayOvertimeDates[dayOfWeek - 1].push({
+                                        date: day.date,  // "9/27" 형태
+                                        rawDate: dateStr,  // "2025-9-27" 형태
+                                        hours: totalHours  // 근무시간
+                                    });
                                     console.log(`  ✅ ${dayNames[dayOfWeek]} 초과근무 카운트! (${day.total}분 >= 480분) → 현재: ${weekdayOvertime[dayOfWeek - 1]}회`);
                                 } else {
                                     console.log(`  ⚪ ${dayNames[dayOfWeek]} 근무시간 부족 (${day.total}분 < 480분)`);
@@ -1313,6 +1551,7 @@
             console.log('   수요일:', weekdayOvertime[2], '회');
             console.log('   목요일:', weekdayOvertime[3], '회');
             console.log('   금요일:', weekdayOvertime[4], '회');
+            console.log('📅 요일별 최대 가능 횟수:', weekdayMaxCount, '← [월, 화, 수, 목, 금]');
             
             const stdMins = workDays * 480, overMins = Math.max(0, totalMins - stdMins);
             const avgIn = clockInCount > 0 ? clockInSum / clockInCount : 0, avgOut = clockOutCount > 0 ? clockOutSum / clockOutCount : 0;
@@ -1327,6 +1566,8 @@
                 vacationUsed: vacationInfo.used, vacationRemain: vacationInfo.remain,
                 avgHoursPerDay: avgHoursPerDay,
                 weekdayOvertime: weekdayOvertime,
+                weekdayMaxCount: weekdayMaxCount,
+                weekdayOvertimeDates: weekdayOvertimeDates,
                 display: { workDays: `${workDays}일`, stdHours: memberFormatMinutes(stdMins), totalHours: memberFormatMinutes(totalMins), overTime: memberFormatMinutes(overMins), vacation: memberFormatDaysToText(vacationInfo.used), remainVacation: memberFormatDaysToText(vacationInfo.remain), avgIn: avgIn > 0 ? memberFormatMinutes(avgIn, 'colon') : '-', avgOut: avgOut > 0 ? memberFormatMinutes(avgOut, 'colon') : '-', missing: `${dayByDay.filter(d => d.isMissing).length}건` }
             };
             return memberCurrentCalculatedData;
@@ -1370,20 +1611,24 @@
                 totalDot.classList.remove('green', 'red');
                 if (result.totalHoursRaw < result.stdHoursRaw) {
                     totalDot.classList.add('red');
+                    totalDot.setAttribute('data-tooltip', '기록 누락된 건이 있어 기준 근로시간에 미치지 못합니다.');
                 } else {
                     totalDot.classList.add('green');
+                    totalDot.setAttribute('data-tooltip', '기록 누락된 건이 없습니다.');
                 }
             }
             
-            // 초과 근무 원 색상 변경 ('0시간'만 초록, 나머지는 빨강)
+            // 초과 근무 원 색상 변경 (항상 빨강)
             const overtimeDot = document.getElementById('overtime_status_dot');
             if (overtimeDot) {
                 overtimeDot.classList.remove('green', 'red');
-                // '0시간'만 정상(초록), 나머지는 모두 문제(빨강)
-                if (result.display.overTime === '0시간') {
-                    overtimeDot.classList.add('green');
+                overtimeDot.classList.add('red');
+                
+                // '-' 또는 '0시간'일 때는 "초과 근무가 없습니다"
+                if (result.display.overTime === '-' || result.display.overTime === '0시간') {
+                    overtimeDot.setAttribute('data-tooltip', '초과 근무가 없습니다.');
                 } else {
-                    overtimeDot.classList.add('red');
+                    overtimeDot.setAttribute('data-tooltip', '초과 근무가 발생했습니다.');
                 }
             }
             
@@ -1394,8 +1639,10 @@
                 // '0일' 또는 '0건'만 정상(초록), 나머지는 모두 문제(빨강)
                 if (result.display.missing === '0일' || result.display.missing === '0건') {
                     missingDot.classList.add('green');
+                    missingDot.setAttribute('data-tooltip', '기록이 누락된 부분이 없습니다.');
                 } else {
                     missingDot.classList.add('red');
+                    missingDot.setAttribute('data-tooltip', '기록이 누락된 부분이 있습니다.');
                 }
             }
             
@@ -1405,8 +1652,10 @@
                 avgInDot.classList.remove('green', 'red');
                 if (result.display.avgIn === '-') {
                     avgInDot.classList.add('red');
+                    avgInDot.setAttribute('data-tooltip', '출근 기록이 없습니다.');
                 } else {
                     avgInDot.classList.add('green');
+                    avgInDot.setAttribute('data-tooltip', '이번 달 평균 출근 시각입니다.');
                 }
             }
             
@@ -1416,8 +1665,10 @@
                 avgOutDot.classList.remove('green', 'red');
                 if (result.display.avgOut === '-') {
                     avgOutDot.classList.add('red');
+                    avgOutDot.setAttribute('data-tooltip', '퇴근 기록이 없습니다.');
                 } else {
                     avgOutDot.classList.add('green');
+                    avgOutDot.setAttribute('data-tooltip', '이번 달 평균 퇴근 시각입니다.');
                 }
             }
             
@@ -1487,7 +1738,16 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` ${context.parsed.y}회`;
+                                    const actualCount = context.parsed.y;
+                                    const dayIndex = context.dataIndex;
+                                    
+                                    // memberCurrentCalculatedData에서 최대 가능 횟수 가져오기
+                                    if (memberCurrentCalculatedData && memberCurrentCalculatedData.weekdayMaxCount) {
+                                        const maxCount = memberCurrentCalculatedData.weekdayMaxCount[dayIndex];
+                                        return ` ${actualCount}/${maxCount}회`;
+                                    }
+                                    
+                                    return ` ${actualCount}회`;
                                 }
                             }
                         }
@@ -1532,11 +1792,13 @@
                 if (hasAccess(userKey)) {
                     selectedUserKey = userKey;
                     memberUpdateUI(memberCalculateData(userKey));
+                    calculateDeptStats(userKey, currentMemberMonth);
                 } else {
                     // 암호 입력 요구
                     openPasswordModal(userKey, () => {
                         selectedUserKey = userKey;
                         memberUpdateUI(memberCalculateData(userKey));
+                        calculateDeptStats(userKey, currentMemberMonth);
                     }, false);
                 }
             } 
@@ -1846,9 +2108,14 @@
                     const orgStr = String(org).trim();
                     let team = '기타';
                     
-                    // Guy는 CEO지만 경영지원팀으로 분류 (특별 케이스)
+                    // 특별 케이스들
+                    // Guy는 CEO지만 경영지원팀으로 분류
                     if (dept === 'Guy') {
                         team = '경영지원팀';
+                    }
+                    // Dante는 메디컬팀으로 분류
+                    else if (dept === 'Dante') {
+                        team = '메디컬팀';
                     }
                     // CEO 제외
                     else if (orgStr.includes('CEO') && !orgStr.includes('경영지원')) {
