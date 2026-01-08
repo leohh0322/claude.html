@@ -1304,6 +1304,7 @@
    if (ceoRawData.length) await ceoProcessExcel(ceoRawData); 
   }
   function getCurrentMonthOrgData() {
+   console.log('🔍 [DEBUG] getCurrentMonthOrgData 시작');
    const teamData = {
     '개발팀': { members: {} },
     '메디컬팀': { members: {} },
@@ -1407,15 +1408,21 @@
       if (avgIn > avgOut) {
        workMins += 1440;
       }
-      if (workMins < 0 || workMins > 900) return;
+      console.log(`  ${member.name} (${team}): avgIn=${(avgIn/60).toFixed(2)}h, avgOut=${(avgOut/60).toFixed(2)}h, workMins=${(workMins/60).toFixed(2)}h`);
+      if (workMins < 0 || workMins > 900) {
+       console.log(`    → 범위 초과 제외 (${(workMins/60).toFixed(2)}h)`);
+       return;
+      }
       workMins -= 60;
       if (workMins < 0) workMins = 0;
       if (workMins > 0) {
        teamTotalMins += workMins;
        validMemberCount++;
+       console.log(`    → 포함! 근무시간=${(workMins/60).toFixed(2)}h`);
       }
      });
      const teamAvg = validMemberCount > 0 ? teamTotalMins / validMemberCount : 0;
+     console.log(`  ${team} 최종: ${(teamAvg/60).toFixed(2)}h (${validMemberCount}명)`);
      teamValues.push(teamAvg);
     }
    });
@@ -1990,4 +1997,5 @@
   });
   document.getElementById('passwordInput').focus();
  </script>
+<!-- VERSION: 2025-01-06-v2 날짜별 그룹화 적용 -->
 </body></html>
