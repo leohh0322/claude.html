@@ -752,7 +752,6 @@
      dailyMap.set(dateStr, {
       date: dateStr,
       rawDate: rawDateValue,
-      total: 0,
       vacation: 0,
       in: inTime > 0 ? inTime : Infinity,
       out: outTime > 0 ? outTime : -Infinity,
@@ -768,7 +767,6 @@
      }
     }
     const day = dailyMap.get(dateStr);
-    day.total += total;
     day.vacation += vacation;
     if (hasHolidayType) { day.hasHolidayType = true; }
     if (isBeforeJoinDate) { day.isBeforeJoinDate = true; }
@@ -785,7 +783,11 @@
     const finalIn = day.in === Infinity ? 0 : day.in, finalOut = day.out === -Infinity ? 0 : day.out;
     const isWorkDay = !day.hasHolidayType && !day.isBeforeJoinDate;
     if (isWorkDay) workDays++;
-    if (!day.isBeforeJoinDate) { totalMins += day.total + day.vacation; vacationMins += day.vacation; }
+    let dayWorkMins = 0;
+    if (finalIn > 0 && finalOut > 0 && finalOut > finalIn) {
+     dayWorkMins = finalOut - finalIn;
+    }
+    if (!day.isBeforeJoinDate) { totalMins += dayWorkMins + day.vacation; vacationMins += day.vacation; }
     if (day.vacation === 0) {
      if (finalIn > 0) { clockInSum += finalIn; clockInCount++; }
      if (finalOut > 0) { clockOutSum += finalOut; clockOutCount++; }
@@ -827,14 +829,14 @@
      } else {
      }
     }
-    const totalWithVacation = day.total + day.vacation;
+    const totalWithVacation = dayWorkMins + day.vacation;
     const isInsufficientTime = isWorkDay && totalWithVacation > 0 && totalWithVacation < 470;
     dayByDay.push({
      date: day.date,
      rawDate: day.rawDate,
-     total: day.total,
+     total: dayWorkMins,
      vacation: day.vacation,
-     over: Math.max(0, day.total - 480),
+     over: Math.max(0, dayWorkMins - 480),
      in: finalIn,
      out: finalOut,
      isWorkDay: isWorkDay,
@@ -1731,17 +1733,22 @@
      }
      if (!users[userId].dailyMap.has(dateKey)) {
       users[userId].dailyMap.set(dateKey, {
-       workMins: 0,
+       inMin: Infinity,
+       outMax: -Infinity,
        vacationMins: 0,
        hasHolidayType: false,
        hasPolicy: false
       });
      }
      const dayData = users[userId].dailyMap.get(dateKey);
-     dayData.workMins += workMins;
+     const inMins = ceoParseToMinutes(row['출근시각']);
+     const outMins = ceoParseToMinutes(row['퇴근시각']);
+     if (inMins > 0 && inMins < dayData.inMin) dayData.inMin = inMins;
+     if (outMins > 0 && outMins > dayData.outMax) dayData.outMax = outMins;
      dayData.vacationMins += vacationMins;
      if (isOffDay) dayData.hasHolidayType = true;
-     if (!isNoPolicy) dayData.hasPolicy = true;
+     const hasLeavePolicy = leavePolicy && String(leavePolicy).trim() !== '';
+     if (!isNoPolicy || hasLeavePolicy) dayData.hasPolicy = true;
     }
     if (!isOffDay && dateStr) {
      try {
@@ -1761,10 +1768,18 @@
         name: name,
         date: dateKey,
         dayOfWeek: dayOfWeek,
-        totalMins: 0
+        inMin: Infinity,
+        outMax: -Infinity
        };
       }
-      dailyPersonData[personDateKey].totalMins += workMins;
+      const inMins = ceoParseToMinutes(row['출근시각']);
+      const outMins = ceoParseToMinutes(row['퇴근시각']);
+      if (inMins > 0 && inMins < dailyPersonData[personDateKey].inMin) {
+       dailyPersonData[personDateKey].inMin = inMins;
+      }
+      if (outMins > 0 && outMins > dailyPersonData[personDateKey].outMax) {
+       dailyPersonData[personDateKey].outMax = outMins;
+      }
      } catch(e) {
      }
     }
@@ -1778,10 +1793,16 @@
      if (isWorkDay) {
       workDays++;
      }
-     const dayTotal = dayData.workMins + dayData.vacationMins;
+     const inMin = dayData.inMin === Infinity ? 0 : dayData.inMin;
+     const outMax = dayData.outMax === -Infinity ? 0 : dayData.outMax;
+     let dayWorkMins = 0;
+     if (inMin > 0 && outMax > 0 && outMax > inMin) {
+      dayWorkMins = outMax - inMin;
+     }
+     const dayTotal = dayWorkMins + dayData.vacationMins;
      totalMins += dayTotal;
      const isNoPolicy = !dayData.hasPolicy;
-     const isInsufficientTime = dayTotal > 0 && dayTotal < 470;
+     const isInsufficientTime = isWorkDay && dayTotal > 0 && dayTotal < 470;
      if (isWorkDay && (isNoPolicy || isInsufficientTime)) {
       missingCount++;
      }
@@ -1804,8 +1825,14 @@
     }
    });
    Object.values(dailyPersonData).forEach(personDay => {
-    if (personDay.totalMins > 0 && weekdayData[personDay.dayOfWeek]) {
-     weekdayData[personDay.dayOfWeek].push(personDay.totalMins);
+    const inMin = personDay.inMin === Infinity ? 0 : personDay.inMin;
+    const outMax = personDay.outMax === -Infinity ? 0 : personDay.outMax;
+    let dayMins = 0;
+    if (inMin > 0 && outMax > 0 && outMax > inMin) {
+     dayMins = outMax - inMin;
+    }
+    if (dayMins > 0 && weekdayData[personDay.dayOfWeek]) {
+     weekdayData[personDay.dayOfWeek].push(dayMins);
     }
    });
    const weekdayLabels = ['월', '화', '수', '목', '금'];
