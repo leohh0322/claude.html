@@ -853,7 +853,7 @@
     if (avgIn > avgOut) {
      workMins += 1440;
     }
-    if (workMins >= 0 && workMins <= 900) {
+    if (workMins >= 0 && workMins <= 1440) {
      workMins -= 60;
      if (workMins < 0) workMins = 0;
      avgHoursPerDay = workMins / 60;
@@ -1306,15 +1306,17 @@
    if (ceoRawData.length) await ceoProcessExcel(ceoRawData); 
   }
   function getCurrentMonthOrgData() {
-   console.log('🔍 [DEBUG] getCurrentMonthOrgData 시작');
+   console.log('🔍 [CEO] getCurrentMonthOrgData - 구성원 페이지의 avgHoursPerDay 직접 사용');
+   
    const teamData = {
-    '개발팀': { members: {} },
-    '메디컬팀': { members: {} },
-    '경영지원팀': { members: {} },
-    '품질책임팀': { members: {} },
-    '기획1팀': { members: {} },
-    '기획2팀': { members: {} }
+    '개발팀': [],
+    '메디컬팀': [],
+    '경영지원팀': [],
+    '품질책임팀': [],
+    '기획1팀': [],
+    '기획2팀': []
    };
+   
    const deptToTeamMap = {
     'Anthony': '개발팀',
     'Greg': '개발팀',
@@ -1338,98 +1340,96 @@
     'Leo': '경영지원팀',
     'Jake': '품질책임팀'
    };
+   
+   // 각 구성원별로 이름 수집
+   const membersByDept = {};
    ceoRawData.forEach(row => {
     const dept = row['회사내 이름'];
     const name = row['이름'];
-    const team = deptToTeamMap[dept];
-    if (!team || !teamData[team]) return;
+    if (!dept || !deptToTeamMap[dept]) return;
+    
     const special = row['특이사항'] ? String(row['특이사항']).trim() : '';
     if (special.includes('입사일 이전')) return;
-    const vacationMins = ceoParseToMinutes(row['휴가시간']);
-    if (vacationMins > 0) return;
-    const inTime = ceoParseToMinutes(row['출근시각']);
-    const outTime = ceoParseToMinutes(row['퇴근시각']);
-    if (inTime <= 0 || outTime <= 0) return;
-    const dateStr = row['날짜'];
-    if (!dateStr) return;
-    let dateKey;
-    try {
-     const d = dateStr instanceof Date ? dateStr : new Date(dateStr);
-     dateKey = d.toISOString().split('T')[0];
-    } catch(e) {
-     dateKey = String(dateStr);
-    }
-    if (!teamData[team].members[dept]) {
-     teamData[team].members[dept] = {
-      name: name,
-      dailyData: {}
-     };
-    }
-    if (!teamData[team].members[dept].dailyData[dateKey]) {
-     teamData[team].members[dept].dailyData[dateKey] = {
-      inMin: Infinity,
-      outMax: -Infinity
-     };
-    }
-    if (inTime < teamData[team].members[dept].dailyData[dateKey].inMin) {
-     teamData[team].members[dept].dailyData[dateKey].inMin = inTime;
-    }
-    if (outTime > teamData[team].members[dept].dailyData[dateKey].outMax) {
-     teamData[team].members[dept].dailyData[dateKey].outMax = outTime;
+    
+    if (!membersByDept[dept]) {
+     membersByDept[dept] = { name: name, team: deptToTeamMap[dept] };
     }
    });
+   
+   console.log('');
+   console.log('구성원별 avgHoursPerDay 계산:');
+   console.log('-'.repeat(80));
+   
+   // 각 구성원에 대해 memberCalculateData 호출
+   Object.keys(membersByDept).forEach(dept => {
+    const memberInfo = membersByDept[dept];
+    const name = memberInfo.name;
+    const team = memberInfo.team;
+    const key = name + '|' + dept;
+    
+    // 구성원 페이지와 동일한 계산 함수 호출
+    const result = memberCalculateData(key);
+    
+    if (result && result.avgHoursPerDay > 0) {
+     teamData[team].push({
+      name: name,
+      dept: dept,
+      avgHoursPerDay: result.avgHoursPerDay
+     });
+     console.log('  OK: ' + name + ' (' + dept + '): ' + result.avgHoursPerDay.toFixed(2) + 'h');
+    } else {
+     console.log('  NO: ' + name + ' (' + dept + '): 데이터 없음');
+    }
+   });
+   
+   console.log('');
+   console.log('조직별 평균 계산:');
+   console.log('-'.repeat(80));
+   
+   // 조직별 평균 계산
    const teamOrder = ['개발팀', '메디컬팀', '경영지원팀', '품질책임팀', '기획1팀', '기획2팀'];
    const teamLabels = [];
    const teamValues = [];
+   
    teamOrder.forEach(team => {
-    const memberList = Object.values(teamData[team].members);
+    const members = teamData[team];
     teamLabels.push(team);
-    if (memberList.length === 0) {
+    
+    if (members.length === 0) {
+     console.log('');
+     console.log(team + ': 구성원 없음');
      teamValues.push(0);
-    } else {
-     let teamTotalMins = 0;
-     let validMemberCount = 0;
-     memberList.forEach(member => {
-      const dates = Object.values(member.dailyData);
-      if (dates.length === 0) return;
-      let inSum = 0, outSum = 0, count = 0;
-      dates.forEach(day => {
-       const finalIn = day.inMin === Infinity ? 0 : day.inMin;
-       const finalOut = day.outMax === -Infinity ? 0 : day.outMax;
-       if (finalIn > 0 && finalOut > 0) {
-        inSum += finalIn;
-        outSum += finalOut;
-        count++;
-       }
-      });
-      if (count === 0) return;
-      const avgIn = inSum / count;
-      const avgOut = outSum / count;
-      if (avgIn <= 0 || avgOut <= 0) return;
-      let workMins = avgOut - avgIn;
-      if (avgIn > avgOut) {
-       workMins += 1440;
-      }
-      console.log(`  ${member.name} (${team}): avgIn=${(avgIn/60).toFixed(2)}h, avgOut=${(avgOut/60).toFixed(2)}h, workMins=${(workMins/60).toFixed(2)}h`);
-      if (workMins < 0 || workMins > 900) {
-       console.log(`    → 범위 초과 제외 (${(workMins/60).toFixed(2)}h)`);
-       return;
-      }
-      workMins -= 60;
-      if (workMins < 0) workMins = 0;
-      if (workMins > 0) {
-       teamTotalMins += workMins;
-       validMemberCount++;
-       console.log(`    → 포함! 근무시간=${(workMins/60).toFixed(2)}h`);
-      }
-     });
-     const teamAvg = validMemberCount > 0 ? teamTotalMins / validMemberCount : 0;
-     console.log(`  ${team} 최종: ${(teamAvg/60).toFixed(2)}h (${validMemberCount}명)`);
-     teamValues.push(teamAvg);
+     return;
     }
+    
+    console.log('');
+    console.log(team + ' (' + members.length + '명):');
+    
+    let totalHours = 0;
+    members.forEach(member => {
+     totalHours += member.avgHoursPerDay;
+     console.log('  ' + member.name + ': ' + member.avgHoursPerDay.toFixed(2) + 'h');
+    });
+    
+    const avgHours = totalHours / members.length;
+    const avgMins = avgHours * 60;
+    const hours = Math.floor(avgMins / 60);
+    const minutes = Math.round(avgMins % 60);
+    
+    console.log('  합계: ' + totalHours.toFixed(2) + 'h');
+    console.log('  평균: ' + avgHours.toFixed(2) + 'h (= ' + hours + '시간 ' + minutes + '분)');
+    console.log('');
+    
+    teamValues.push(avgMins);
    });
+   
+   console.log('getCurrentMonthOrgData 완료');
+   console.log('');
    return { labels: teamLabels, values: teamValues };
   }
+
+
+
   function ceoParseToMinutes(val) {
    if (!val) return 0;
    if (typeof val === 'number') return Math.round(val * 24 * 60);
@@ -2024,5 +2024,4 @@
   });
   document.getElementById('passwordInput').focus();
  </script>
-<!-- VERSION: 2025-01-06-v2 날짜별 그룹화 적용 -->
 </body></html>
