@@ -741,6 +741,13 @@
     }
     const total = memberParseToMinutes(row['총 근무']), vacation = memberParseToMinutes(row['휴가시간']);
     let inTime = memberParseToMinutes(row['출근시각']), outTime = memberParseToMinutes(row['퇴근시각']);
+    // 출퇴근시각이 없으면 시작종료시각 사용
+    if (inTime === 0 && row['근무정책']) {
+     inTime = memberParseToMinutes(row['시작시각']);
+    }
+    if (outTime === 0 && row['근무정책']) {
+     outTime = memberParseToMinutes(row['종료시각']);
+    }
     if (outTime > 0 && inTime > 0 && outTime < inTime) {
      outTime += 1440;
     }
@@ -786,6 +793,10 @@
     let dayWorkMins = 0;
     if (finalIn > 0 && finalOut > 0 && finalOut > finalIn) {
      dayWorkMins = finalOut - finalIn;
+     // 휴게시간 1시간 차감
+     if (dayWorkMins > 60) {
+      dayWorkMins -= 60;
+     }
     }
     if (!day.isBeforeJoinDate) { totalMins += dayWorkMins + day.vacation; vacationMins += day.vacation; }
     if (day.vacation === 0) {
@@ -1741,8 +1752,15 @@
       });
      }
      const dayData = users[userId].dailyMap.get(dateKey);
-     const inMins = ceoParseToMinutes(row['출근시각']);
-     const outMins = ceoParseToMinutes(row['퇴근시각']);
+     let inMins = ceoParseToMinutes(row['출근시각']);
+     let outMins = ceoParseToMinutes(row['퇴근시각']);
+     // 출퇴근시각이 없으면 시작종료시각 사용
+     if (inMins === 0 && policy) {
+      inMins = ceoParseToMinutes(row['시작시각']);
+     }
+     if (outMins === 0 && policy) {
+      outMins = ceoParseToMinutes(row['종료시각']);
+     }
      if (inMins > 0 && inMins < dayData.inMin) dayData.inMin = inMins;
      if (outMins > 0 && outMins > dayData.outMax) dayData.outMax = outMins;
      dayData.vacationMins += vacationMins;
@@ -1798,6 +1816,10 @@
      let dayWorkMins = 0;
      if (inMin > 0 && outMax > 0 && outMax > inMin) {
       dayWorkMins = outMax - inMin;
+      // 휴게시간 1시간 차감
+      if (dayWorkMins > 60) {
+       dayWorkMins -= 60;
+      }
      }
      const dayTotal = dayWorkMins + dayData.vacationMins;
      totalMins += dayTotal;
