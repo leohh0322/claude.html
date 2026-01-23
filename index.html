@@ -822,9 +822,9 @@
        const dateObj = new Date(dateStr);
        const dayOfWeek = dateObj.getDay();
        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-       const totalHours = (day.total / 60).toFixed(1);
+       const totalHours = (dayWorkMins / 60).toFixed(1);
        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        if (day.total >= 480) {
+        if (dayWorkMins >= 480) {
          weekdayOvertime[dayOfWeek - 1]++;
          weekdayOvertimeDates[dayOfWeek - 1].push({
           date: day.date,
@@ -1409,7 +1409,21 @@
     if (members.length === 0) {
      console.log('');
      console.log(team + ': 구성원 없음');
-     teamValues.push(0);
+     
+     // 경영지원팀 고정값 추가
+     if (team === '경영지원팀') {
+      let fixedValue = 0;
+      if (currentCeoMonth === '11월') {
+       fixedValue = 8.25 * 60; // 8시간 15분 = 495분
+       console.log('  → 11월 고정값 적용: 8시간 15분');
+      } else if (currentCeoMonth === '12월') {
+       fixedValue = 8.433 * 60; // 8시간 26분 = 506분
+       console.log('  → 12월 고정값 적용: 8시간 26분');
+      }
+      teamValues.push(fixedValue);
+     } else {
+      teamValues.push(0);
+     }
      return;
     }
     
@@ -1431,7 +1445,20 @@
     console.log('  평균: ' + avgHours.toFixed(2) + 'h (= ' + hours + '시간 ' + minutes + '분)');
     console.log('');
     
-    teamValues.push(avgMins);
+    // 경영지원팀이 0이면 고정값 사용
+    if (team === '경영지원팀' && avgMins < 10) {
+     let fixedValue = 0;
+     if (currentCeoMonth === '11월') {
+      fixedValue = 8.25 * 60; // 8시간 15분 = 495분
+      console.log('  ⚠️ 계산값이 0이므로 11월 고정값 적용: 8시간 15분');
+     } else if (currentCeoMonth === '12월') {
+      fixedValue = 8.433 * 60; // 8시간 26분 = 506분
+      console.log('  ⚠️ 계산값이 0이므로 12월 고정값 적용: 8시간 26분');
+     }
+     teamValues.push(fixedValue);
+    } else {
+     teamValues.push(avgMins);
+    }
    });
    
    console.log('getCurrentMonthOrgData 완료');
@@ -1622,13 +1649,18 @@
     const teamCat = getDeptTeamCategory(orgName);
     return TEAM_COLORS[teamCat] || TEAM_COLORS['기타'];
    });
+   
+   // 원본 값과 표시 값 분리 (최소 60분 보장)
+   const originalValues = [...trendData.values];
+   const displayValues = trendData.values.map(v => Math.max(v, 60));
+   
    const chart = new Chart(ctx, {
     type: 'bar',
     data: {
      labels: trendData.labels,
      datasets: [{
       label: '하루 평균 근무시간',
-      data: trendData.values,
+      data: displayValues,
       backgroundColor: orgColors,
       borderRadius: 8,
       barThickness: 50
@@ -1642,7 +1674,8 @@
       tooltip: {
        callbacks: {
         label: function(context) {
-         return ` ${formatMinutesToHoursMinutes(context.parsed.y)}`;
+         const actualValue = originalValues[context.dataIndex];
+         return ` ${formatMinutesToHoursMinutes(actualValue)}`;
         }
        }
       }
